@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Network manager notify binary
+NM_NOTIFY_BIN="/etc/networkmanager/bin/nmd-notify"
+
+# Identification of caller
+CLIENT_TYPE="pppv4c"
+
+# Provide IP UP event
+$NM_NOTIFY_BIN $CLIENT_TYPE "ip-up"

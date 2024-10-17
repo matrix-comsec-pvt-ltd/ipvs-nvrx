@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ -z "$1" ] && echo "Error: should be called from udhcpc" && exit 1
+
+# Network manager notify binary
+NM_NOTIFY_BIN="/etc/networkmanager/bin/nmd-notify"
+
+# Identification of caller
+CLIENT_TYPE="dhcpv4c"
+
+# $1 = DHCP states: "deconfig", "bound", "renew", "nak" and "leasefail"
+$NM_NOTIFY_BIN $CLIENT_TYPE "$1"

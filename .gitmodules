@@ -1,0 +1,3 @@
+[submodule "deps/submodules/ipvs-nvr-rk3588-plat"]
+	path = deps/submodules/ipvs-nvr-rk3588-plat
+	url = https://github.com/matrix-comsec-pvt-ltd/ipvs-nvr-rk3588-plat.git
