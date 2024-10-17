@@ -1,11 +1,9 @@
 # docs
 feasibility contains:
-    - Setting_TimeZone_Feasibility.docx
-        - Done feasibility for xyz reason
-    - HDMI_Feasibility.docx
-        - Done feasibility for xyz reason for specific xyz product variant
+1. Setting_TimeZone_Feasibility.docx (Done feasibility for xyz reason)
+2. HDMI_Feasibility.docx (Done feasibility for xyz reason)
 
 system-design contains:
-    - AsyncPb_Feature_Design_Flow.pdf
-    - Decode_Disp_Lib_LLD.doc
-    - RTSP_Binary_Design_Communication.pdf
+1. AsyncPb_Feature_Design_Flow.pdf
+2. Decode_Disp_Lib_LLD.doc
+3. RTSP_Binary_Design_Communication.pdf
