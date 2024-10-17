@@ -1,0 +1,26 @@
+QMAKE_CXX.QT_COMPILER_STDCXX = 201402L
+QMAKE_CXX.QMAKE_GCC_MAJOR_VERSION = 10
+QMAKE_CXX.QMAKE_GCC_MINOR_VERSION = 3
+QMAKE_CXX.QMAKE_GCC_PATCH_VERSION = 1
+QMAKE_CXX.COMPILER_MACROS = \
+    QT_COMPILER_STDCXX \
+    QMAKE_GCC_MAJOR_VERSION \
+    QMAKE_GCC_MINOR_VERSION \
+    QMAKE_GCC_PATCH_VERSION
+QMAKE_CXX.INCDIRS = \
+    /opt/rk3588_nvrx/host/toolchain/aarch64-none-linux-gnu/include/c++/10.3.1 \
+    /opt/rk3588_nvrx/host/toolchain/aarch64-none-linux-gnu/include/c++/10.3.1/aarch64-none-linux-gnu \
+    /opt/rk3588_nvrx/host/toolchain/aarch64-none-linux-gnu/include/c++/10.3.1/backward \
+    /opt/rk3588_nvrx/host/toolchain/lib/gcc/aarch64-none-linux-gnu/10.3.1/include \
+    /opt/rk3588_nvrx/host/toolchain/lib/gcc/aarch64-none-linux-gnu/10.3.1/include-fixed \
+    /opt/rk3588_nvrx/host/toolchain/aarch64-none-linux-gnu/include \
+    /opt/rk3588_nvrx/host/aarch64-buildroot-linux-gnu/sysroot/usr/include
+QMAKE_CXX.LIBDIRS = \
+    /opt/rk3588_nvrx/host/toolchain/lib/gcc/aarch64-none-linux-gnu/10.3.1 \
+    /opt/rk3588_nvrx/host/toolchain/lib/gcc \
+    /opt/rk3588_nvrx/host/toolchain/aarch64-none-linux-gnu/lib64 \
+    /opt/rk3588_nvrx/host/aarch64-buildroot-linux-gnu/sysroot/lib64 \
+    /opt/rk3588_nvrx/host/aarch64-buildroot-linux-gnu/sysroot/usr/lib64 \
+    /opt/rk3588_nvrx/host/toolchain/aarch64-none-linux-gnu/lib \
+    /opt/rk3588_nvrx/host/aarch64-buildroot-linux-gnu/sysroot/lib \
+    /opt/rk3588_nvrx/host/aarch64-buildroot-linux-gnu/sysroot/usr/lib

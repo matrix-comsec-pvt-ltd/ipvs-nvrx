@@ -1,0 +1,454 @@
+﻿#ifndef VALIDATIONMESSAGE_H
+#define VALIDATIONMESSAGE_H
+
+#include <QtCore/QMap>
+#include <QObject>
+#include <QtCore/QCoreApplication>
+#include <EnumFile.h>
+
+//this Multilanguage is translate broken strings
+#define RECORDING_FAIL_MSG(deviceName,camCount)                         Multilang("Device") + Multilang(": ") +  QString(deviceName) + QString(": ") + Multilang("Recording Failed for") + QString("\n%1 ").arg (camCount) + Multilang("Camera(s)")
+
+#define NOT_ENOUGH_SPACE_ON_USB(usedSpace,freeSpace)                    Multilang("There is not enough space on USB.Record size:") + QString(usedSpace) + Multilang("MB free space") + QString(":") + QString(freeSpace) + Multilang("MB")
+
+#define DECODER_INSTANCE(startedDecoderInstance)                        QString("%1").arg(startedDecoderInstance) + Multilang(" ") + Multilang("Decoder Instance Available!")
+
+#define UNABLE_TO_PLAY(cameraNameOfDevice,devResponseArray)             (cameraNameOfDevice) + Multilang(": Cannot play due to File I/O Error")
+
+#define DECODER_CAPACITY_REACHED(cameraName)                            Multilang("Decoder Capacity Reached for Camera no") + Multilang(" ") + (cameraName)
+
+#define CAMERA_CONFIG_CHANGED(cameraName)                               (cameraName) + Multilang(" ") + Multilang(": Config changed!")
+
+#define REMAINING_FAILED_ATTEMPT_MSG(remainingAttempts)                 (QString(". ") + Multilang("You have") + QString(" %1 ").arg(remainingAttempts) + Multilang("attempt(s) left"))
+
+#define MAIN_WINDOW_DISKCLEANUP_REQUIRED_MESSAGE(hddCleanInfoTimerCnt)  (Multilang("HDD cleanup required which will stop all ongoing HDD recordings. Do you want to continue?") + QString("\n\n") + INT_TO_QSTRING(hddCleanInfoTimerCnt) + Multilang(" ") + Multilang("second(s) remaining..."))
+
+#define USER_ACCOUNT_LOCK_PREFIX_STR                                    "Your account has been locked due to maximum failed attempts. Locked Duration :"
+#define USER_ACC_LOCKED_DUE_TO_FAIL_ATTEMPT_MSG(retryMin)               (Multilang(USER_ACCOUNT_LOCK_PREFIX_STR) + QString(" ") + INT_TO_QSTRING(retryMin) + Multilang(" ") + Multilang("minute(s)"))
+
+#define USER_PASSWROD_MIN_LEN_MSG(minPassLen)                           (Multilang("Minimum required characters :") + QString(" %1 ").arg(minPassLen) + Multilang("characters"))
+
+#define MAIN_WINDOW_STARTLIVEVIEWMESSAGE()                              (Multilang("Would you like to start live view of cameras?"))
+
+#define DHCP_SERVER_IP_LIST_CLEAR_NOTE                                  Multilang("Note: On changing any parameter of DHCP Server or selected LAN port, the allocated IP List might get cleared")
+
+class ValidationMessage
+{
+private:
+    static ValidationMessage* m_validationMessage;
+
+private:
+    QMap<int, QString> m_validationMapStr;
+    QMap<int, QString> m_deviceResponceMapStr;
+
+public:
+    ValidationMessage();
+    ~ValidationMessage();
+
+    static ValidationMessage* getInstance();
+    static QString getValidationMessage(quint32 messageEnum);
+    QString loadValidationMessage(quint32 messageEnum);
+    static QString getDeviceResponceMessage(quint32 messageResponce);
+    QString loadDeviceResponceMessage(quint32 messageResponce);
+
+};
+
+typedef enum
+{
+    //AdativeRecording
+    ADAPTREC_EN_ADAPT_REC,
+
+    //AdvanceCameraSearch
+    ADV_CAM_SEARCH_STR_END_DIFF,
+    ADV_CAM_SEARCH_STR_END_SAME,
+
+    //CameraOsdSetting
+    CAM_OSD_SETTING_CANNOT_SET_BOTH_OSD_VALUE,
+    CAM_OSD_SETTING_ENT_TEXT,
+
+    //camera Search
+    CAM_SRCH_CAM_ADD_SUCCESS,
+    CAM_SRCH_AUTO_CONFI,
+    CAM_SRCH_ADD_CAM_REQ_FAIL,
+    CAM_SRCH_SELECT_CAM_TO_AUTO_CONFI,
+
+    //camera setting
+    CAM_SETTING_CAM_NAME,
+    CAM_SETTING_CONF_CAM_BEF_PROCESS,
+    CAM_SETTING_MOTION_AREA_SET,
+    CAM_SETTING_PRIV_AREA_SET,
+
+    //IpAddressChange
+    IP_ADD_CHANGE_ENT_VALID_SUBNET_MASK,
+    IP_ADD_CHANGE_ENT_VALID_DEFAULT_GATEWAY,
+    IP_ADD_CHANGE_IP_ADDR_AND_DEF_GATEWAY_SAME_SUBNET,
+
+    //IpCameraSetting
+    IP_CAM_SET_ENT_VALID_BRAND_NM,
+    IP_CAM_SET_ENT_MODEL_NM,
+    IP_CAM_SET_CAM_ADD_LEFT_BLK,
+    IP_CAM_SET_ENT_VALID_PASS,
+
+    //IpStreamSetting
+    IP_STRM_SET_VIDEO_ENCODE,
+    IP_STRM_SET_RESOLUTION,
+    IP_STRM_SET_PROFILE_SUCCESS,
+    IP_STRM_SET_PROFILE_ERROR,
+
+    //PresetTour
+    PRESET_TOUR_POSTN_AGANT_TWO_NM,
+
+    //PrivacyMaskSetting
+    PRIVACY_MASK_SETTING,
+
+    //PtzSchedule
+    PTZSCHD_TOUR_OVERLAP,
+
+    //Login.cpp
+    LOGIN_USER_NAME_ERROR,
+    LOGIN_PASSWORD_ERROR,
+    LOGIN_INCORRECT_PASS_ERROR,
+    LOGIN_NEW_PASS_BLANK_ERROR,
+    LOGIN_CONFM_PASS_ERROR,
+    LOGIN_PASS_MISMATCH_ERROR,
+    LOGIN_CURRNT_PASS_ERROR,
+    LOGIN_SUCCESS_MSG,
+    LOGIN_LOGOUT_SUCCESS_MSG,
+    LOGIN_PASS_EXPIRE_ONE_DAY,
+
+    //BlockUser.cpp
+    BLOCK_USER_SUCCESS_UNBLOCK,
+
+    //SystemControl
+    SYSTEM_CONTROL_RESTART_MESSAGE,
+    SYSTEM_CONTROL_SHUTDOWN_MESSAGE,
+    SYSTEM_CONTROL_FACTORY_RESTORE_MESSAGE,
+
+    //OnlineUser.cpp
+    ONLINE_USER_SUCCESS_BLOCK,
+
+    //ModifyPassword.cpp
+    MODIFY_PASS_CHANGE_SUCCESS,
+    MODIFY_PASS_ENT_OLD_PASS,
+    MODIFY_PASS_ENT_NEW_PASS,
+    MODIFY_PASS_INCORRECT_PASS,
+
+    //syncPlaybackCropAndBackup
+    SYNC_PB_CROP_AND_BACKUP,
+
+    //SyncPlayback.cpp
+     SYNC_PB_CLIP_MAKE_STARTED,
+    SYNC_PB_CLIP_MAKE_STOPPED,
+    SYNC_PB_DEL_CLIP,
+    SYNC_PB_SEL_MIN_EVENT,
+    SYNC_PB_SEL_MIN_CAM,
+
+    //PlayBackSearch.cpp
+    PB_SRCH_MORE_REC_MSG,
+    PB_SRCH_MAX_BKUP_MSG,
+    PB_SRCH_BKUP_MIN_MSG,
+    PB_SRCH_BKUP_DEV_ERR_MSG,
+    PB_SRCH_FILE_COPIED_SUCCESS,
+    PB_SRCH_FILE_COPY_FAIL,
+
+    //QUICK BACKUP//
+    QUICK_BKUP_DEV_ERR_MSG,
+    QUICK_BKUP_DISK_FULL_MSG,
+    QUICK_BKUP_FILE_COPY_FAIL,
+    QUICK_BKUP_ON_LOGOUT_MSG,
+
+    //common
+    ENT_IP_ADDR_RANGE,
+    SAVE_CHANGES,
+    MAINTAIN_CHANGE,
+    GREATER_START_TM,
+    SCHD_OVRLAP_NT_ALW,
+    FIVE_MIN_DIFF,
+    ENT_EMAIL_ADD,
+    ENT_SUBJECT,
+    ENT_MESS,
+    ENT_VAILD_EMAIL_ADD,
+    ENT_FIRST_ALPH,
+    SUCCESS_SAVE_MSG,
+    ENT_VALID_USER,
+    ENT_VALID_MOB_NM,
+    ENT_VALID_MOB_NM1,
+    ENT_VALID_MOB_NM2,
+    ENT_PULSE_PERIOD_DEF_RANGE,
+    SEQUENCING_ON_MSG,
+    WINDOW_SEQUENCING_ON_MSG,
+    WINDOW_EXPANDING_ON_MSG,
+    PB_RUNNING_MESSAGE,
+    ENT_USER_NM,
+    ENT_PASSWORD,
+    ENT_VALID_IP_ADD,
+    START_IP_ADDR_LESS_END_IP_ADDR,
+    ENT_IP_ADDR,
+    ENT_SUBNET_MASK,
+    ENT_DEFAULT_GATEWAY,
+    ENT_PREFIX_LEN,
+    PASSWORD_RANGE_ERROR,
+    ENT_CONFIRM_PASS,
+    PASS_MISMATCH,
+    START_END_DATE_ERR_MSG,
+    DATE_DIFF_ERR_MSG,
+    HTTP_PORT_RANGE,
+  	DEV_NAME,
+    ENT_HOSTNAME,
+    BUZZER_CONTROL_STOP,
+    MSG_SIZE_MAX_LIMIT,
+    ENT_VALUE_DEFI_RANGE,
+    NO_FREE_CHNL_AVAILABLE,
+    SETTING_SAVE_SUCCESS,
+    ERROR_SAVE_MSG,
+    START_CHAR_ERROR_MSG,
+    DEVICE_FIRMWARE_MISMATCH_SERVER_OLD,
+    DEVICE_FIRMWARE_MISMATCH_SERVER_NEW,
+
+    // Validation message for BasicSettings->AutoConfigureCamera
+    AUTO_CONF_IP_STR_END_DIFF,
+    AUTO_CONF_IP_STR_END_SAME,
+    AUTO_CONF_NEW_CAM,
+    AUTO_CONF_MAIN_GOP,
+    AUTO_CONF_SUB_GOP,
+    AUTO_CONF_IP_TYPE_DIFF,
+
+    // Validation message for BasicSettings->DateTimeSetting
+    DATE_TIME_SET_SUCCESS,
+    DATE_TIME_SPFY_NTP_SRVER,
+    DATE_TIME_CNG_CFG_VIDEO_STD,
+
+    // Validation message for BasicSettings->DayLightSaving
+    DAY_LIGHT_DIFF_FRWD_REVRSE,
+
+    //Validation message for BasicSettings->GeneralSetting
+    GEN_SETT_DEV_RANGE_NO,
+    GEN_SETT_SINGLE_FILE_RECORD,
+    GEN_SETT_TCP_PORT_RANGE,
+    GEN_SETT_HTTP_TCP_DIFF,
+    GEN_SETT_TCP_NOT_IN_RTP_RANGE,
+    GEN_SETT_HTTP_NOT_IN_RTP_RANGE,
+    GEN_SETT_INVALID_RTP_START,
+    GEN_SETT_RTP_RANGE_START_END,
+    GEN_SETT_VALUE_64_DIFF,
+    GEN_SETT_CFG_CHANGE_RESTART_SYS,
+    GEN_SETT_SAMAS_PORT_IN_RANGE,
+    GEN_SETT_VIDEO_POP_UP_RANGE,
+    GEN_SETT_PRE_VIDEO_LOSS_RANGE,
+    GEN_SETT_FORWARD_TCP_PORT_RANGE,
+    GEN_SETT_FORWARD_TCP_NOT_IN_RTP_RANGE,
+    GEN_SETT_AUTO_ADD_CAM_TCP_PORT,
+    GEN_SETT_AUTO_ADD_CAM_POLL_DURATION,
+    GEN_SETT_AUTO_ADD_CAM_POLL_INTERVAL,
+
+    //Validation message for NetworkSettings->BroadbandSettings
+    BROAD_SETT_ENT_APN,
+    BROAD_SETT_SAVE_CURRENT_CHANGES,
+    BROAD_SETT_PROF_ALREADY_EXISTS,
+
+    //Validation message for NetworkSettings->DDNSClient
+    DDNS_CLIENT_UPDATED_SUCCESS,
+    DDNS_CLIENT_UPDATE_INT_IN_RANGE,
+
+    //Validation message for NetworkSettings->EmailClient
+    EMAIL_CLIENT_MAIL_SENT_SUCCESS,
+    EMAIL_CLIENT_ENT_MAIL_SERVER,
+    EMAIL_CLIENT_ENT_PORT,
+    EMAIL_CLIENT_SENDER_EMAIL_ID,
+    EMAIL_CLIENT_RECEIVER_EMAIL_ID,
+
+    //Validation message for NetworkSettings->FtpClient
+    FTP_CLIENT_FILE_UPLOAD_SUCCESS,
+    FTP_CLIENT_ENT_FTP_SERVER_ADDR,
+    FTP_CLIENT_ENT_CORRECT_ADDR,
+
+    //Validation message for NetworkSettings->IpFiltering
+    IP_FILTER_DELETE_IP_RANGE,
+    IP_FILTER_START_OR_START_END_IP_ADDR,
+    IP_FILTER_START_END_IP_ADDR,
+    IP_FILTER_RANGE,
+    IP_FILTER_START_IP_LESS_THAN_END_IP,
+    IP_FILTER_ENABLE_MODE,
+    IP_FILTER_ENT_SAME_IP_VERSION,
+
+    //Validation message for NetworkSettings->Lan1Setting, Lan2Setting
+    LAN_SETT_ENT_CORRECT_IP_ADDR,
+    LAN_SETT_ENT_CORRECT_SUBNET_MASK,
+    LAN_SETT_ENT_CORRECT_GATEWAY_MASK,
+    LAN_SETT_ENT_CORRECT_PREF_DNS_ADDR,
+    LAN_SETT_ENT_CORRECT_ALTR_DNS_ADDR,
+    LAN_SETT_ENT_GATEWAY_MASK,
+    LAN_SETT_ENT_PPPoE_USERNAME,
+    LAN_SETT_ENT_PPPoE_PASSWORD,
+    LAN_SETT_ENT_PREF_DNS_VALUE,
+
+    //Validation message for NetworkSettings->MatrixDnsClient
+    MATRIX_DNS_REG_SUCCESS,
+    MATRIX_DNS_REG_HOST_NAME,
+    MATRIX_DNS_HOST_NAME_ATLEAST_3_CHAR,
+    MATRIX_DNS_ENT_VALID_PORT,
+
+    //Validation message for NetworkSettings->MediaFileAccess
+    MEDIA_FILE_ENT_FTP_PORT,
+
+    //Validation message for NetworkSettings->SmsSetting
+    SMS_SETT_ENT_VALID_MOBILE_NO,
+    SMS_SETT_ENT_MOBILE_NO,
+    SMS_SETT_ENT_SENDER_ID,
+    SMS_SETT_MESSAGE_SENT_SUCCESS,
+
+    //Validation message for NetworkSettings->StaticRouting
+    STATIC_ROUT_SELECT_VALID_SUBNET,
+    STATIC_ROUT_SELECT_VALID_INTERFACE,
+    STATIC_ROUT_ENT_NW_ADDR,
+
+    //Validation message for NetworkSettings->TcpClient
+    TCP_CLIENT_NOTI_SENT_SUCCESS,
+    TCP_CLIENT_ENT_SERVER_VALUE,
+
+    //Validation message for Layout
+    LAYOUT_STREAM_LIMIT_ERROR_MESSAGE,
+    LAYOUT_NO_FREE_WINDOW_ERROR_MESSAGE,
+    LAYOUT_PB_ERROR_MESSAGE,
+    LAYOUT_WINDOW_SEQENC_ERROR_MESSAGE,
+    LAYOUT_SEQ_STOP_FOR_MAIN_WINDOW,
+    LAYOUT_MANUAL_REC_START,
+    LAYOUT_MANUAL_REC_STOP,
+    LAYOUT_PTZ_NOT_SUPPORTED,
+
+    // DEVICE
+    DEV_SETTING_ENT_VAL_DEV_NAME,
+    DEV_SETTING_ENT_VAL_DEV_MODEL_NAME,
+    DEV_SETTING_ENT_PORT_DEFI_RANGE,
+    DEV_SETTING_PASS_MIN_4_CHAR,
+    DEV_SETTING_ENT_MAC_ADDR,
+    DEV_SETTING_DEV_NAME_MATCH_LOCAL,
+    DEV_SETTING_ENT_DIFF_DEV_NAME,
+    DEV_SETTING_ENT_DEV_NAME_ALR_EXIT,
+    DEV_SETTING_ENT_DEV_ALR_EXIT,
+    DEV_SETTING_HOSTNAME_ATLEST_3_CHAR,
+    DEV_SETTING_DEL_DEVICE_CNFORM,
+    DEV_SETTING_END_CHAR_ERROR_MSG,
+    DEV_SETTING_DEVICE_ADDED_SUCCESS,
+    DEV_SETTING_DEVICE_MODIFIED_SUCCESS,
+    DEV_SETTING_DEVICE_DEL_SUCCESS,
+    DEV_SETTING_ENT_FORWARDED_TCP_PORT_DEFI_RANGE,
+    DEV_SETTING_DEV_NAME_MATCH_DEFAULT_NAME,
+
+    // STORAGE BACKUP->HDD MANAGEMENT
+    HDD_MANAGE_DO_REALY_WANT_FORMAT,
+    HDD_MANAGE_ALL_REC_DATA_LOST_PLAYBACK_BACKUP_STOP,
+    HDD_MANAGE_PROCESS_NOT_ABORTED_CHANGE_HDD,
+    HDD_MANAGE_FORMAT_HDD_USE_MAZ_SIZE,
+
+    // STORAGE BACKUP->HDD GROUP MANAGEMENT
+    HDD_GROUP_MANAGE_DISK_ALREADY_ASSIGN,
+    HDD_GROUP_MANAGE_CAMERA_ALREADY_ASSIGN,
+    HDD_GROUP_MANAGE_REC_STOP,
+
+    // STORAGE BACKUP->NETWORK DRIVE
+    NW_DRIVE_ENT_NAME,
+    NW_DRIVE_ENT_DFL_FOLDER,
+    NW_DRIVE_TEST_CONN_SUCCESS,
+    NW_DRIVE_TEST_CONN_FAILED,
+
+    // STORAGE BACKUP->STORAGE MANANGEMENT
+    STOR_MANAGE_ENT_PERCENT_DEFI_RANGE,
+    STOR_MANAGE_ENT_SPACE_VALUE_DEFI_RANGE,
+
+    // STORAGE BACKUP->USB MANAGEMENT
+    USB_MANAGE_USB_EJECT_SUCCESS,
+    USB_MANAGE_FORMAT_DEV,
+    USB_MANAGE_UNPLUG_DEV,
+    USB_MANAGE_STOP_BACKUP,
+
+    // USER ACCOUNT MANAGEMENT SETTING->USER ACCOUNT
+    USR_ACC_MANAGE_MAX_LIMIT_USER,
+    USR_ACC_MANAGE_SURE_DELETE_USER,
+    USR_ACC_MANAGE_USER_NAME_EXIST,
+    USR_ACC_MANAGE_PASS_LESS_THAN_MAX,
+    USR_ACC_MANAGE_ENT_LOGIN_LIM_DEFI_RANGE,
+    USR_ACC_MANAGE_ENT_LOGIN_LIM_DURATION,
+    USR_ACC_MANAGE_USER_DEL_SUCCESS,
+    USR_ACC_MANAGE_USER_ADD_SUCCES,
+    USR_ACC_MANAGE_USER_MODIFY_SUCCESS,
+
+    // USER ACCOUNT MANAGEMENT SETTING->PUSH NOTIFICATIONS STATUS
+    PUSH_NOTIFICATIONS_DELETE_CLIENT,
+
+    // MAINWINDOW
+    MAIN_WINDOW_INIT_MSG ,
+    MAIN_WINDOW_DEINIT_MSG,
+    MAIN_WINDOW_DISKCLEANUP_WARNING_MESSAGE,
+    MAIN_WINDOW_SNAPSHOT_SUCCESS,
+    MAIN_WINDOW_LOGIN_EXPIRED,
+
+    // TOOLBAR
+    TOOLBAR_COLLAPSE_WINDOW_MESSAGE,
+    TOOLBAR_VIDEO_POPUP_WINDOW_MESSAGE,
+
+    //DISPLAYSETTING
+    DISP_SETTING_CUST_SEQ_START_MSG,
+    DISP_SETTING_SAVE_MSG,
+    DISP_SETTING_RES_KEEP_MSG,
+    DISP_SETTING_MAIN_DISP_CHANGE,
+    DISP_SETTING_CONFI_AUTO_PAGE_WINDOW_SEQ,
+    DISP_SETTING_RESTART_UI_APPL_NOTICE,
+
+    // APEARANCE SETTINGS
+    APPEARENCE_SETTING_ERROR_DEFAULT_MSG,
+    APPEARENCE_SETTING_DEFAULT_MSG,
+
+    // PTZ CONTROL
+    PTZ_CONTROL_ENT_POSITION_NAME,
+    PTZ_CONTROL_POSITION_SAVE_SUCCESS,
+    PTZ_CONTROL_POSITION_DEL_SUCCESS,
+    PTZ_CONTROL_POSITION_NUM_CONGI,
+    PTZ_CONTROL_DEL_POSITION,
+    PTZ_PRESET_POS_EMPTY,
+    PTZ_ALREADY_PRESENT_INDEX,
+    PTZ_PRESET_NAME_ALREADY_PRESENT,
+
+   // CONFIGURATION CONTROL
+    CONFI_CONTROL_DEFAULT_INFO_MSG,
+    CONFI_CONTROL_TEST_CONN_WARNG_MSG,
+    CONFI_CONTROL_DEVICE_DEFAULT_INFO_MSG,
+
+    // TWO WAY AUDIO
+    TWO_WAY_CAM_AUD_STP_PRO_CLNT_AUD,
+    TWO_WAY_PLYBK_AUD_STP_PRO_CLNT_AUD,
+    TWO_WAY_PLYBK_AUD_REQ_FAIL_PRO_CLNT_AUD,
+
+    //LOCAL DECODING
+    LOCAL_DECODING_DISABLED,
+    LOCAL_DECODING_DISABLED_CLICK_ACTION,
+
+    //AUTO ADD CAMERA
+    AUTO_ADD_CAM_NO_CAM_SEL,
+
+    MAN_BACKUP_VALIDATION,
+    MAN_BACKUP_SAVE_VALIDATION,
+
+    //Recording format
+    REC_BOTH_WARNING,
+    REC_AVI_WARNING,
+    REC_FRM_NATIVE_TO_AVI,
+
+    CHANGE_PREFEREED_LANGUAGE,
+    FIMRWARE_UPGRADE_NOTE,
+
+    //General settings
+    GEN_SETTING_LOCAL_NAME_MATCH_REMOTE,
+
+    //MANAGE->PASSWORD RECOVERY
+    ENT_EMAIL_ID_OR_ALL_QA,
+    ENT_ALL_QA,
+    ENT_PWD_RST_OTP,
+
+    // Date and Time Settings
+    INVALID_DATE_RANGE,
+    MAX_VALIDATION_MESSAGE
+
+}VALIDATION_MESSAGE_e;
+
+#endif //VALIDATIONMESSAGE_H

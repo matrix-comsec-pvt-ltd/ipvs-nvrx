@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text-html; charset=utf-8">
+    <title>NVR Logs Settings</title>
+</head>
+
+<script language="JavaScript">
+    var msgTimer = null;
+
+    var serverLogLevels = [
+        ["SERVER_LOG_SYSTEM", "System Log"],
+        ["SERVER_LOG_CAMERA", "Camera"],
+        ["SERVER_LOG_DISK_MANAGEMENT", "Backup, Recording & Disk"],
+        ["SERVER_LOG_NETWORK_SERVICE", "Network Service"],
+        ["SERVER_LOG_MEDIA_STREAMING", "Streaming & Media"],
+        ["SERVER_LOG_EVENT_ACTION", "Event & Action"],
+        ["SERVER_LOG_OTHER_SERVICES", "Others"],
+    ]
+
+    var guiLogLevels = [
+        ["GUI_LOG_GROUP_1", "Group-1"],
+        ["GUI_LOG_GROUP_2", "Group-2"],
+        ["GUI_LOG_GROUP_3", "Group-3"],
+        ["GUI_LOG_GROUP_4", "Group-4"],
+    ]
+
+    var SYS_LOG_STS_e = {
+        SYS_LOG_STS_SUCCESS: 0,
+        SYS_LOG_STS_FAIL: 1,
+        SYS_LOG_STS_AUTH_ERR: 2,
+        SYS_LOG_STS_PARSE_ERR: 3,
+        SYS_LOG_STS_RESOURCE_ERR: 4,
+        SYS_LOG_STS_MAX: 5
+    };
+
+    var serverLevelTooltip = [
+        "System Log",
+        "Camera Initiation\nCamera Interface\nPTZ Tour\nOnvif Client\n",
+        "Disk Manager\nBackup Manager\nNetwork Drive Manager\nRecord Manager\n",
+        "Network Manager\nMDNS Client\nDDNS Client\nEmail Notification\nFTP Client\nHTTP Client\nSMS Notification\nTCP Notification\nPush Notification\nP2P Module\nDHCP Server\n",
+        "Live Streamer\nPlayback Streamer\nRTSP Interface\nRTSP Client\n",
+        "Event Handler\nEvent Logger\nCamera Event\nImage Upload\nSchedule Snapshot\n",
+        "System Upgrade\nUtils Module\nIO Module\nDate-Time Module\nConfiguration\nDevice Initiation\n"
+    ];
+
+    var guiLevelTooltip = [
+        "Layout\nApplication Controller\nStream Request\nGUI Library\n",
+        "Live Media\n",
+        "Async Playback\nSync Playback",
+        "Device Client\nConfiguration\nUtils Module\nGUI system\n"
+    ];
+
+    async function getUrlData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok, status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get("Content-Type");
+
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            throw error;
+        }
+    }
+
+    async function GetSystemInfo() {
+        try {
+            const objData = await getUrlData("/systeminfo");
+            if (typeof objData === "object") {
+                document.getElementById("systeminfo").textContent = objData.model + " - " + objData.version + " (" + objData.buildtime + ")";
+            } else {
+                console.error("Error in get system info:", objData);
+            }
+        } catch (error) {
+            console.error("Fail to get system info:", error);
+        }
+    }
+
+    async function GetSystemLogs() {
+        try {
+            const objData = await getUrlData("/systemlogs");
+            if (typeof objData === "object") {
+                document.getElementById("remotelogin").checked = objData.remotelogin;
+                document.getElementById("debugenable").checked = objData.systemlogs.enable;
+                document.getElementById("debugdestination").value = objData.systemlogs.sink;
+                document.getElementById("serverip").value = objData.systemlogs.serverip;
+                document.getElementById("serverport").value = objData.systemlogs.serverport;
+
+                for (var level = 0; level < serverLogLevels.length; level++) {
+                    document.getElementById(serverLogLevels[level][0]).checked = objData.systemlogs.serverlevels[level];
+                }
+
+                for (var level = 0; level < guiLogLevels.length; level++) {
+                    document.getElementById(guiLogLevels[level][0]).checked = objData.systemlogs.guilevels[level];
+                }
+            } else {
+                console.error("Error in get system logs:", objData);
+            }
+        } catch (error) {
+            console.error("Fail to get system logs:", error);
+        }
+    }
+
+    async function SetSystemLogs() {
+        var serverLevels = [];
+        for (var level = 0; level < serverLogLevels.length; level++) {
+            serverLevels.push(document.getElementById(serverLogLevels[level][0]).checked);
+        }
+
+        var guiLevels = [];
+        for (var level = 0; level < guiLogLevels.length; level++) {
+            guiLevels.push(document.getElementById(guiLogLevels[level][0]).checked);
+        }
+
+        const data = {
+            remotelogin: document.getElementById("remotelogin").checked,
+            systemlogs: {
+                enable: document.getElementById("debugenable").checked,
+                sink: parseInt(document.getElementById("debugdestination").value),
+                serverip: document.getElementById("serverip").value,
+                serverport: parseInt(document.getElementById("serverport").value),
+                serverlevels: serverLevels,
+                guilevels: guiLevels
+            },
+            authentication: sha256(document.getElementById("PSWD").value)
+        };
+
+        jsonBody = JSON.stringify(data, null, 4);
+
+        try {
+            const response = await fetch("/systemlogs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: jsonBody
+            });
+
+            if (!response.ok) {
+                throw new Error();
+            }
+
+            const jsonResponse = await response.json();
+            if (jsonResponse.status === SYS_LOG_STS_e.SYS_LOG_STS_SUCCESS) {
+                displayValidationMess("Applied successfully.");
+            } else if (jsonResponse.status === SYS_LOG_STS_e.SYS_LOG_STS_AUTH_ERR) {
+                displayValidationMess("Invalid password!");
+            } else {
+                displayValidationMess("Processing error!");
+            }
+        } catch (error) {
+            console.error("Error submitting form data:", error);
+        }
+    }
+
+    async function loadDataOnPageLoad() {
+        try {
+            await GetSystemInfo();
+
+            await GetSystemLogs();
+        } catch (error) {
+            console.error("Error in loadDataOnPageLoad:", error);
+        }
+    }
+
+    function clearAllServerLevels() {
+        for (var level = 0; level < serverLogLevels.length; level++) {
+            document.getElementById(serverLogLevels[level][0]).checked = false;
+        }
+    }
+
+    function selectAllServerLevels() {
+        for (var level = 0; level < serverLogLevels.length; level++) {
+            document.getElementById(serverLogLevels[level][0]).checked = true;
+        }
+    }
+
+    function clearAllUiLevels() {
+        for (var level = 0; level < guiLogLevels.length; level++) {
+            document.getElementById(guiLogLevels[level][0]).checked = false;
+        }
+    }
+
+    function selectAllUiLevels() {
+        for (var level = 0; level < guiLogLevels.length; level++) {
+            document.getElementById(guiLogLevels[level][0]).checked = true;
+        }
+    }
+
+    async function ConfirmSubmit() {
+        if (document.getElementById("PSWD").value == "") {
+            displayValidationMess("Please enter password!");
+            document.getElementById("PSWD").focus();
+            return false;
+        }
+
+        var serverIpAddr = document.getElementById("serverip").value;
+        if ((document.getElementById("debugdestination").value == 2 || serverIpAddr != "") && validateIPaddress(serverIpAddr) != true) {
+            alert("Please enter valid IP address.");
+            return false;
+        }
+
+        var serverPort = parseInt(document.getElementById("serverport").value);
+        if (isNaN(serverPort) || serverPort <= 0 || serverPort > 65535) {
+            alert("Please enter valid port in range of (1 - 65535).");
+            return false;
+        }
+
+        await SetSystemLogs();
+        await loadDataOnPageLoad();
+
+        return true;
+    }
+
+    function validateIPaddress(ip) {
+        const ipv4Regex = /^\s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\s*)$/;
+        const ipv6Regex = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+
+        return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+    }
+
+    function setTimer(timerCallBack) {
+        if (msgTimer != null) {
+            clearTimeout(msgTimer);
+        }
+        msgTimer = setTimeout(function () {
+            handleTimeout(timerCallBack);
+        }, 3000);
+        return msgTimer;
+    }
+
+    function handleTimeout(timerCallBack) {
+        if (msgTimer != null) {
+            clearTimeout(msgTimer);
+        }
+        msgTimer = null;
+
+        if (timerCallBack === undefined) {
+            displayValidationMess("Processing error!");
+        } else {
+            timerCallBack();
+        }
+    }
+
+    function removeValidationMsg() {
+        var validation = document.getElementById("validation");
+        validation.setAttribute("style", "width:200px;color:#FFFFFF;");
+        validation.innerHTML = "";
+    }
+
+    function displayValidationMess(message) {
+        if (msgTimer != null) {
+            clearTimeout(msgTimer);
+            msgTimer = null;
+        }
+
+        var validation = document.getElementById("validation");
+        if (message == "Applied successfully.") {
+            validation.setAttribute("style", "width:200px;color:#43A047; font-size:14px; font-weight: bold;");
+        } else {
+            validation.setAttribute("style", "width:200px;color:#E53935; font-size:14px; font-weight: bold;");
+        }
+        validation.innerHTML = message;
+        setTimer(removeValidationMsg);
+    }
+
+    function sha256(ascii) {
+        function rightRotate(value, amount) {
+            return (value >>> amount) | (value << (32 - amount));
+        }
+
+        var mathPow = Math.pow;
+        var maxWord = mathPow(2, 32);
+        var lengthProperty = 'length';
+        var i, j; // Used as a counter across the whole file
+        var result = '';
+
+        var words = [];
+        var asciiBitLength = ascii[lengthProperty] * 8;
+
+        //* caching results is optional - remove/add slash from front of this line to toggle
+        // Initially, this will create a list of constants: primes, square root coefficients
+        var hash = (sha256.h = sha256.h || []);
+        var k = (sha256.k = sha256.k || []);
+        var primeCounter = k[lengthProperty];
+
+        var isComposite = {};
+        for (var candidate = 2; primeCounter < 64; candidate++) {
+            if (!isComposite[candidate]) {
+                for (i = 0; i < 313; i += candidate) {
+                    isComposite[i] = candidate;
+                }
+                hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+                k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+            }
+        }
+
+        ascii += '\x80'; // Append '1' bit (plus zero padding)
+        while ((ascii[lengthProperty] % 64) - 56) ascii += '\x00'; // More zero padding
+        for (i = 0; i < ascii[lengthProperty]; i++) {
+            j = ascii.charCodeAt(i);
+            if (j >> 8) return; // ASCII check: only accept characters in the 0-255 range
+            words[i >> 2] |= j << (((3 - i) % 4) * 8);
+        }
+        words[words[lengthProperty]] = (asciiBitLength / maxWord) | 0;
+        words[words[lengthProperty]] = asciiBitLength;
+
+        // process each chunk
+        for (j = 0; j < words[lengthProperty];) {
+            var w = words.slice(j, (j += 16)); // The message is expanded into 64 words as part of the iteration
+            var oldHash = hash;
+            // This is now the current hash, that we're working on
+            hash = hash.slice(0, 8);
+
+            for (i = 0; i < 64; i++) {
+                var i2 = i + j;
+                // Expand the message into 64 words
+                // Used below if
+                var w15 = w[i - 15],
+                    w2 = w[i - 2];
+
+                // Iterate
+                var a = hash[0],
+                    e = hash[4];
+                var temp1 =
+                    hash[7] +
+                    (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) +
+                    ((e & hash[5]) ^ (~e & hash[6])) +
+                    k[i] +
+                    (w[i] =
+                        i < 16
+                            ? w[i]
+                            : (w[i - 16] +
+                                (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) +
+                                w[i - 7] +
+                                (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) |
+                            0);
+                // This is only used once, so *could* be moved below, but it only saves 4 bytes and makes things unreadble
+                var temp2 =
+                    (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) +
+                    ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+
+                hash = [(temp1 + temp2) | 0].concat(hash); // (i == 0) ? 2 : 1
+                hash[4] = (hash[4] + temp1) | 0;
+            }
+
+            for (i = 0; i < 8; i++) {
+                hash[i] = (hash[i] + oldHash[i]) | 0;
+            }
+        }
+
+        for (i = 0; i < 8; i++) {
+            for (j = 3; j + 1; j--) {
+                var b = (hash[i] >> (j * 8)) & 255;
+                result += (b < 16 ? 0 : '') + b.toString(16);
+            }
+        }
+        return result;
+    }
+</script>
+
+<style type="text/css">
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    body {
+        background-color: #fff;
+        font-family: 'Segoe UI', Roboto, sans-serif, Arial;
+        font-size: 14px;
+        color: #172b4d;
+        position: relative;
+        width: 100vw;
+        max-width: 95%;
+        margin: auto;
+    }
+
+    .left {
+        margin-top: 20px;
+        width: 35%;
+        float: left;
+    }
+
+    .right {
+        margin-top: 20px;
+        width: 30%;
+        float: left;
+    }
+
+    .middle {
+        margin-top: 20px;
+        width: 30%;
+        float: left;
+    }
+
+    .button {
+        position: relative;
+        background-color: #ebedf0;
+        border: none;
+        font-size: 14px;
+        color: #243553;
+        padding: 10px;
+        margin-top: 15px;
+        width: 100px;
+        text-align: center;
+        transition-duration: 0.4s;
+        text-decoration: none;
+        border-radius: 4px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        background-color: #dfe1e6;
+    }
+
+    .heading {
+        color: #172b4d;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .heading-border {
+        border-top-style: solid;
+        border-width: 1px;
+        border-top-color: #c1c7d0;
+        width: 330px;
+        padding: 12px 0;
+    }
+
+    .menu-option {
+        font-size: 14px;
+        padding-bottom: 10px;
+        padding-right: 10px;
+    }
+
+    .select-option {
+        height: 16px;
+        width: 16px;
+        margin-bottom: 10px;
+    }
+
+    .input-option {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 4px;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-option {
+        width: 100px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 4px;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .tooltip {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        font-size: 12px;
+        background-color: #000000dc;
+        width: 150px;
+        color: #fff;
+        white-space: pre-line;
+        text-align: center;
+        border-radius: 4px;
+        padding: 5px 0;
+        position: absolute;
+        margin-left: 10px;
+        z-index: 1;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
+    .noborder {
+        border-width: 0px;
+    }
+
+    .divfooter {
+        width: 95%;
+        position: fixed;
+        bottom: 60px;
+        height: 30px;
+        border-top: 1px solid #c1c7d0;
+    }
+
+    .td {
+        border-style: solid;
+        border-color: #ffffff;
+    }
+</style>
+
+<body onLoad="loadDataOnPageLoad();">
+    <div style="width:95%;position:absolute;margin-left:5px;" id=BOTTOM name=BOTTOM>
+        <div class="left">
+            <p class="heading">Device Settings</p>
+            <table class="heading-border">
+                <tr>
+                    <td class="menu-option">Remote Login</td>
+                    <td><input class="select-option" type="checkbox" name="remotelogin" id="remotelogin"></td>
+                </tr>
+            </table>
+
+            <p class="heading" style="margin-top: 30px;">Debug Settings</p>
+            <table class="heading-border">
+                <tr>
+                    <td class="menu-option">Enable</td>
+                    <td><input class="select-option" type="checkbox" name="debugenable" id="debugenable"></td>
+                </tr>
+                <tr>
+                    <td class="menu-option">Destination</td>
+                    <td>
+                        <select class="dropdown-option" name="logs" id="debugdestination">
+                            <option value="1">FILE</option>
+                            <option value="2">SYSLOG</option>
+                            <option value="3">USB</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="menu-option">Server IP</td>
+                    <td><input class="input-option" type="text" name="serverip" id="serverip" maxlength="39" size="32" value=''></td>
+                </tr>
+                <tr>
+                    <td class="menu-option">Server Port</td>
+                    <td><input class="input-option" type="text" name="serverport" id="serverport" maxlength="5" size="5" value=''></td>
+                </tr>
+            </table>
+        </div>
+        <div class="middle">
+            <p class="heading">Server Debug Levels</p>
+            <table class="heading-border">
+                <script language="javascript">
+                    for (var level = 0; level < serverLogLevels.length; level++) {
+                        document.write("<tr>");
+                        document.write("<td class=menu-option>");
+                        document.write(serverLogLevels[level][1]);
+                        document.write("</td>");
+                        document.write("<td>");
+                        document.write("<div class='tooltip'>")
+                        document.write("<input class=select-option type='checkbox' id=" + serverLogLevels[level][0] + ">");
+                        document.write("<span class='tooltiptext'>");
+                        document.write(serverLevelTooltip[level]);
+                        document.write("</span></div>");
+                        document.write("</tr>");
+                    }
+                </script>
+                <tr>
+                    <td class="noborder">
+                        <button type="button" class="button" style="margin-right: 20px;" onclick="selectAllServerLevels()">Select All</button>
+                        <button type="button" class="button" onclick="clearAllServerLevels()">Clear All</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="right">
+            <p class="heading">GUI Debug Levels</p>
+            <table class="heading-border">
+                <script language="javascript">
+                    for (var level = 0; level < guiLogLevels.length; level++) {
+                        document.write("<tr>");
+                        document.write("<td class=menu-option align=left>");
+                        document.write(guiLogLevels[level][1]);
+                        document.write("</td>");
+                        document.write("<td>");
+                        document.write("<div class='tooltip'>")
+                        document.write("<input class=select-option type = 'checkbox' id=" + guiLogLevels[level][0] + ">");
+                        document.write("<span class='tooltiptext'>");
+                        document.write(guiLevelTooltip[level]);
+                        document.write("</span></div>");
+                        document.write("</tr>");
+                    }
+                </script>
+                <tr>
+                    <td class="noborder">
+                        <button type="button" class="button" style="margin-right: 20px;" onclick="selectAllUiLevels()">Select All</button>
+                        <button type="button" class="button" onclick="clearAllUiLevels()">Clear All</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="left" style="margin-top: 300px;margin-left:5px;">
+                <p class="heading" style="margin-top: 60px;">Downloads</p>
+                <table class="heading-border">
+                    <tr>
+                        <td class=noborder>
+                            <a href="/log">
+                                <h4 style="font-size: 14px; font-weight: 500; text-decoration: underline;">Click to Get Log Files</h4>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class=divfooter>
+                <table cellspacing=20px style="width:95%;">
+                    <tr>
+                        <td class=noborder style="width: 60px; ">
+                            <p style="font-size: 14px; font-weight: 500; ">Password</p>
+                        </td>
+                        <td class=noborder style="width: 110px; "><input class="input-option" style="margin-bottom: 0;" type="password" name="PSWD" id="PSWD" maxlength="9" size="9"
+                                value=''></td>
+                        <td class=noborder style="width: 110px;"><input type="button" class="button" style="margin-top: 0;" value="Submit" onClick="return ConfirmSubmit()"></td>
+                        <td class=noborder style="width: 200px;" id="validation"></td>
+                        <td class=noborder style="font-size: 14px; font-weight: bold;" id=systeminfo></td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+    <script type="text/javascript " src="/jquery-3.5.0.min.js "></script>
+    <script type="text/javascript " src="/cookie.js "></script>
+</body>
+
+</html>

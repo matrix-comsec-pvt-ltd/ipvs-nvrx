@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text-html; charset=utf-8">
+    <title>NVR Packets Capture</title>
+</head>
+
+<script language="JavaScript">
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Variables
+    /////////////////////////////////////////////////////////////////////////////////////
+    var refreshTimerId = null;
+
+    var interfaceNameStr = ["LAN 1", "LAN 2", "Broadband"];
+
+    var filterSettingExamples = [
+        ["src port 80", "Capture packets if the packet has a source port value of 80"],
+        ["dst port 80", "Capture packets if the packet has a destination port value of 80"],
+        ["port 80", "Capture packets if the packet has either source or destination port value of 80"],
+        ["src host 192.168.1.176", "Capture packets if the source IP address is 192.168.1.176"],
+        ["dst host 192.168.1.176", "Capture packets if the destination IP address is 192.168.1.176"],
+        ["host 192.168.1.176", "Capture packets if either source or destination IP address is 192.168.1.176"],
+        ["src host fd00::1234", "Capture packets if the source IPv6 address is fd00::1234"],
+        ["dst host fd00::1234", "Capture packets if the destination IPv6 address is fd00::1234"],
+        ["host fd00::1234", "Capture packets if either source or destination IPv6 address is fd00::1234"],
+    ]
+
+    var PCAP_STATUS_e = {
+        PCAP_STATUS_CAPTURING_PACKET: 0,
+        PCAP_STATUS_INVALID_FILTER: 1,
+        PCAP_STATUS_PROCESS_ERROR: 2,
+        PCAP_STATUS_MAX_SIZE_REACHED: 3,
+        PCAP_STATUS_SAFELY_CLOSED: 4,
+        PCAP_STATUS_PARSE_ERROR: 5,
+        PCAP_STATUS_INTERFACE_DOWN: 6
+    };
+
+    var pcapStausStr = [
+        "Capturing packets",
+        "Invalid filter",
+        "Processing error",
+        "Maximum file size reached",
+        "Capture closed",
+        "Data parse error",
+        "Interface link down"
+    ];
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Functions
+    /////////////////////////////////////////////////////////////////////////////////////
+    async function setUrlData(jsonBody) {
+        try {
+            const response = await fetch("/pcaptrace", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: jsonBody
+            });
+
+            if (!response.ok) {
+                throw new Error();
+            }
+
+            const contentType = response.headers.get("Content-Type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
+        } catch (error) {
+            console.error("Error submitting form data:", error);
+            throw error;
+        }
+    }
+
+    async function getUrlData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Network response was not ok, status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get("Content-Type");
+
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            throw error;
+        }
+    }
+
+    async function StartButtonClicked() {
+        if (ValidateFilter(document.getElementById("pcapFilterStr")) == false) {
+            return;
+        }
+
+        const data = {
+            action: "start",
+            interface: document.getElementById("pcapTraceInteraface").selectedIndex,
+            filter: document.getElementById("pcapFilterStr").value
+        };
+
+        jsonBody = JSON.stringify(data, null, 4);
+
+        try {
+            const objData = await setUrlData(jsonBody);
+            if (typeof objData === "object") {
+                SetResponseData(objData.status, objData.packets, objData.bytes);
+                if (objData.status === PCAP_STATUS_e.PCAP_STATUS_CAPTURING_PACKET) {
+                    refreshTimerId = setInterval(GetPacketTraceStatus, 5000);
+                    SetButtonDisabledStatus(true, false, true);
+                } else {
+                    console.error("fail to start pcap trace:", objData);
+                }
+            } else {
+                console.error("Error in start pcap trace:", objData);
+            }
+        } catch (error) {
+            console.error("Error submitting form data:", error);
+        }
+    }
+
+    async function StopButtonClicked() {
+        deleteTimer();
+
+        const data = {
+            action: "stop"
+        };
+
+        jsonBody = JSON.stringify(data, null, 4);
+
+        try {
+            const objData = await setUrlData(jsonBody);
+            if (typeof objData === "object") {
+                if (objData.status === PCAP_STATUS_e.PCAP_STATUS_SAFELY_CLOSED) {
+                    SetResponseData(objData.status, objData.packets, objData.bytes);
+                } else {
+                    console.error("fail to stop pcap trace:", objData);
+                }
+            } else {
+                console.error("Error in stop pcap trace:", objData);
+            }
+        } catch (error) {
+            console.error("Error submitting form data:", error);
+        }
+
+        SetButtonDisabledStatus(false, true, false);
+    }
+
+    function LoadDataOnPageLoad() {
+        SetButtonDisabledStatus(false, true, true);
+    }
+
+    async function GetPacketTraceStatus() {
+        try {
+            const objData = await getUrlData("/pcaptrace");
+            if (typeof objData === "object") {
+                SetResponseData(objData.status, objData.packets, objData.bytes);
+                if (objData.status != PCAP_STATUS_e.PCAP_STATUS_CAPTURING_PACKET) {
+                    deleteTimer();
+                }
+            } else {
+                console.error("Error in start pcap trace:", objData);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    async function SaveButtonClicked() {
+        try {
+            const response = await fetch("/PcapTrace.pcap", {
+                headers: {
+                    "Content-Type": "application/vnd.tcpdump.pcap"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok.");
+            }
+
+            const blob = await response.blob();
+
+            // Generate a timestamp
+            const now = new Date();
+            const timestamp =
+                now.getFullYear() + "-" +
+                ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                ("0" + now.getDate()).slice(-2) + "_" +
+                ("0" + now.getHours()).slice(-2) + "-" +
+                ("0" + now.getMinutes()).slice(-2) + "-" +
+                ("0" + now.getSeconds()).slice(-2);
+
+            const filename = `PcapTrace_${timestamp}.pcap`;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up the URL object
+        } catch (error) {
+            console.error("There has been a problem with your fetch operation:", error);
+        }
+    }
+
+    function SetResponseData(status, packets, bytes) {
+        document.getElementById("pcapTraceStatus").value = pcapStausStr[status];
+        document.getElementById("pcapPacketCount").value = parseInt(packets);
+        document.getElementById("pcapByteCount").value = parseInt(bytes);
+    }
+
+    function SetButtonDisabledStatus(start, stop, save) {
+        document.getElementById("startPcap").disabled = start;
+        document.getElementById("stopPcap").disabled = stop;
+        document.getElementById("savePcap").disabled = save;
+    }
+
+    function deleteTimer() {
+        clearInterval(refreshTimerId);
+        refreshTimerId = null;
+    }
+
+    function ValidateFilter(objName) {
+        var objTemp = objName;
+        var objString = objTemp.value;
+        var validChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.:!() ";
+
+        if (objTemp.value.length > 0) {
+            for (var i = 0; i < objTemp.value.length; i++) {
+                if (validChar.indexOf(objString.charAt(i)) < 0) {
+                    alert("characters (~,@,#,$,^,*,+,{,},;,\",',?,%,/,) are not allowed!");
+                    objTemp.focus();
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+</script>
+
+<style type="text/css">
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    body {
+        background-color: #fff;
+        font-family: 'Segoe UI', Roboto, sans-serif, Arial;
+        font-size: 14px;
+        color: #172b4d;
+        position: relative;
+        width: 100vw;
+        max-width: 95%;
+        height: 100%;
+        margin: auto;
+    }
+
+    .pageHeaderDiv {
+        color: #172b4d;
+        font-weight: bold;
+        padding: 20px 0 20px 5px;
+    }
+
+    .button {
+        position: relative;
+        background-color: #ebedf0;
+        border: none;
+        font-size: 14px;
+        margin-right: 14px;
+        color: #243553;
+        padding: 10px;
+        width: 140px;
+        text-align: center;
+        transition-duration: 0.4s;
+        text-decoration: none;
+        border-radius: 4px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .button:enabled:hover {
+        background-color: #dfe1e6;
+    }
+
+    .button:disabled {
+        color: #a4b5d3;
+    }
+
+    .button:disabled:hover {
+        color: #a4b5d3;
+    }
+
+    .dropdown-option {
+        width: 130px;
+        height: auto;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 4px;
+        font-size: 14px;
+    }
+
+    .pageContentDiv {
+        width: 100%;
+        top: 50px;
+        height: 85%;
+        text-align: left;
+    }
+
+    .txtboxLeft {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 4px;
+        font-size: 14px;
+    }
+
+    .txtboxLeft:read-only {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 4px;
+        font-size: 14px;
+        border-style: none;
+        background-color: #ebedf0;
+    }
+
+    tr {
+        vertical-align: middle;
+        height: 20px;
+    }
+
+    td {
+        border-style: solid;
+        border-width: 1px;
+        padding: 6px 0 6px 8px;
+        border-color: #c1c7d0;
+    }
+
+    .noborder {
+        border-width: 0px;
+    }
+
+    .tableLable {
+        font-size: 14px;
+    }
+
+    .paraListLable {
+        background-color: #b8b8b8;
+        border-color: #919191;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+</style>
+
+<body onload="LoadDataOnPageLoad()">
+    <div class='pageHeaderDiv'>
+        <p>PCAP Trace</p>
+    </div>
+
+    <div class='pageContentDiv'>
+        <div style="top:0px;left:3px;overflow:auto" id='BOTTOM' name='BOTTOM'>
+            <table style="border-collapse:collapse;" cellpadding=1 id='BOTTOMTABLE' name='BOTTOMTABLE'>
+                <tr>
+                    <td align=left>
+                        <div style="min-width:160px; font-size: 14px;">
+                            <script language=javascript>
+                                document.write("Interface");
+                            </script>
+                        </div>
+                    </td>
+                    <td align=left class=tableLable colspan=2>
+                        <div style="width:130px;">
+                            <select name="pcapTraceInteraface" id="pcapTraceInteraface" class="dropdown-option">
+                                <script language="JavaScript">
+                                    for (var loop = 0; loop < interfaceNameStr.length; loop++) {
+                                        document.write("<OPTION value =" + loop + ">" + interfaceNameStr[loop] + "</OPTION>");
+                                    }
+                                </script>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class=tableLable align=left>
+                        <div style="min-width:100px;">
+                            <script language=javascript>
+                                document.write("Capture Filter");
+                            </script>
+                        </div>
+                    </td>
+                    <td align=left colspan=2>
+                        <div style="min-width:300px;">
+                            <input style="width:375px" class=txtboxLeft id="pcapFilterStr" name="pcapFilterStr" maxlength="60" value="">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class=tableLable align=left>
+                        <div style="width:160px;">
+                            <script language=javascript>
+                                document.write("Packets Captured");
+                            </script>
+                        </div>
+                    </td>
+                    <td align=left class=tableLable colspan=2>
+                        <div style="width:400px;">
+                            <input style="width:200px" class=txtboxLeft id="pcapPacketCount" name="pcapPacketCount" maxlength=16 readonly>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align=left class=tableLable>
+                        <div style="width:100px;">
+                            <script language=javascript>
+                                document.write("Total Bytes");
+                            </script>
+                        </div>
+                    </td>
+                    <td align=left class=tableLable colspan=2>
+                        <div style="width:400px;">
+                            <input style="width:200px" class=txtboxLeft id="pcapByteCount" name="pcapByteCount" maxlength=16 readonly>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class=tableLable align=left>
+                        <div>
+                            <script language="javascript">
+                                document.write("Status");
+                            </script>
+                        </div>
+                    </td>
+
+                    <td colspan=2>
+                        <div>
+                            <input style="width:200px" class=txtboxLeft id="pcapTraceStatus" name="pcapTraceStatus" maxlength=40 readonly>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr></tr>
+
+                <tr>
+                    <td colspan=3 style='border-color:white;'>
+                        <div style="min-width:600px;">
+                            <table border="0">
+                                <tbody>
+                                    <tr>
+                                        <td align=left class=noborder>
+                                            <script language="JavaScript">
+                                                document.write("<input class='button' type='button' name='startPcap' id='startPcap' value='" + "Start" + "' onClick = StartButtonClicked() disabled='disabled'>");
+                                            </script>
+                                        </td>
+                                        <td align=left class=noborder>
+                                            <script language="JavaScript">
+                                                document.write("<input class='button' type='button' name='stopPcap' id='stopPcap' value='" + "Stop" + "' onclick = StopButtonClicked() disabled='disabled'>");
+                                            </script>
+                                        </td>
+                                        <td align=left class=noborder>
+                                            <script language="JavaScript">
+                                                document.write("<input class='button' type='button' name='savePcap' id='savePcap' value='" + "Save Trace File" + "' onclick = SaveButtonClicked() disabled='disabled'>");
+                                            </script>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr></tr>
+                <script language="javascript">
+                    //--Filter setting
+                    document.write("<td class=tableLable align=left style='font-weight: bold;'>");
+                    document.write("<div>" + "Filter Syntax" + "</div>");
+                    document.write("</td>");
+                    //--Comment
+                    document.write("<td class=tableLable align=left style='font-weight: bold;'>");
+                    document.write("<div>" + "Description" + "</div>");
+                    document.write("</td></tr>");
+
+                    for (var cnt = 0; cnt < filterSettingExamples.length; cnt++) {
+                        document.write("<tr>");
+                        document.write("<td class = tableLable align = left  style='width:180px;'>");
+                        document.write("<div>" + filterSettingExamples[cnt][0] + "</div>");
+                        document.write("</td>");
+                        document.write("<td class = tableLable align = left  style='width:600px;'>");
+                        document.write("<div>" + filterSettingExamples[cnt][1] + "</div>");
+                        document.write("</td>");
+                        document.write("</tr>");
+                    }
+                </script>
+                <tr></tr>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>
