@@ -1,4 +1,4 @@
-name: Build and Deploy nvr_rk3588..
+name: Build and Deploy nvr_rk3588
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         with:
           repository: matrix-comsec-pvt-ltd/ipvs-nvr-rk3588-app
           submodules: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Display files
         run: |
