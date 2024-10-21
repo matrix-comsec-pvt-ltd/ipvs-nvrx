@@ -8,8 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    env:
-      token: ${{ secrets.MY_GITHUB_TOKEN }}
+    #env:
+      #token: ${{ secrets.MY_GITHUB_TOKEN }}
   
     steps:
       - name: Install Build Essentials
@@ -22,7 +22,7 @@ jobs:
         with:
           repository: matrix-comsec-pvt-ltd/ipvs-nvr-rk3588-app
           submodules: true
-          #token: ${{ secrets.MY_GITHUB_TOKEN }}
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Display files
         run: |
