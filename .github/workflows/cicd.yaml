@@ -3,7 +3,7 @@ name: Build and Deploy nvr_rk3588..
 on:
   push:
     branches:
-      - main
+      - xyz
 
 jobs:
   build:
@@ -28,3 +28,7 @@ jobs:
         run: |
           echo "Cloned repository:"
           ls -la  # List files in the repository
+
+      #- name: Download Build Dependencies from JFrog
+      #  run: |
+      #    curl -u ${admin}:${Neel@2822} -o /home/runner/work/ipvs-nvr-rk3588-app/ipvs-nvr-rk3588-app/src/Application/Build/platform_upgrade.zip http://localhost:8082/artifactory/matcom-ipvs-nvr/rk3588/release-artifacts/platform/8.7.0/platform_upgrade.zip
