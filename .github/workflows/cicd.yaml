@@ -17,7 +17,7 @@ jobs:
       
       - name: Set up Git for submodules
         run: |
-          git config --global url."https://${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://${{ secrets.MY_GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
           
       - name: Checkout Repository
         uses: actions/checkout@v3
