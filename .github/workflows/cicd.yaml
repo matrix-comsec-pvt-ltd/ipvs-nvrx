@@ -8,9 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-
-env:
-  SECRET_TOKEN: ${{ secrets.YOUR_ORG_SECRET }}
+    env:
+      SECRET_TOKEN: ${{ secrets.YOUR_ORG_SECRET }}
   
     steps:
       - name: Install Build Essentials
