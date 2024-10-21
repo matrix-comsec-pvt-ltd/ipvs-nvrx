@@ -15,9 +15,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential
       
-      - name: Set up Git for submodules
-        run: |
-          git config --global url."https://${{ secrets.MY_GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+      #- name: Set up Git for submodules
+      #  run: |
+      #    git config --global url."https://${{ secrets.MY_GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
           
       - name: Checkout Repository
         uses: actions/checkout@v3
