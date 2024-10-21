@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     env:
-      SECRET_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      token: ${{ secrets.MY_GITHUB_TOKEN }}
   
     steps:
       - name: Install Build Essentials
