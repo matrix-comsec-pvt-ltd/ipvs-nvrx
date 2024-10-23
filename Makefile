@@ -13,7 +13,7 @@ include define.mk
 
 # Get current buid path
 #NVRX_SOURCE_PATH := $(patsubst %/,%,$(shell pwd))
-NVRX_SOURCE_PATH = /home/neeldharsandiya/neel/git_neel/ipvs-nvr-rk3588-app/src
+NVRX_SOURCE_PATH = /home/neeldharsandiya/neel/git_neel/ipvs-nvr-app/src
 #PRODUCT_SOURCE_PATH := $(patsubst %/,%,$(dir $(shell pwd)))
 
 # Buildroot lib path
