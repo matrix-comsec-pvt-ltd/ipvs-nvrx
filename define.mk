@@ -38,9 +38,9 @@ endif
 # Set variables which are common for all
 #########################################################################
 # Set software version, revision & sub-revision
-SOFTWARE_VERSION=1
+SOFTWARE_VERSION=2
 SOFTWARE_REVISION=2
-PRODUCT_SUB_REVISION=3
+PRODUCT_SUB_REVISION=0
 
 # Set device client version
 DEVICE_CLIENT_VERSION=8
