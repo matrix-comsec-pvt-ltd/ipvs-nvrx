@@ -72,8 +72,8 @@ endif
 ##SVN_REPO_URL=svn://192.168.100.5
 GIT_HOME_DIR="/home/neeldharsandiya/neel/git_neel"
 
-RK3588_REPO_NAME="ipvs-nvr-rk3588-app"
-REPO_IPVS_NVR_RK3588_PATH="$(GIT_HOME_DIR)/$(RK3588_REPO_NAME)/"
+REPO_NAME="ipvs-nvr-app"
+REPO_IPVS_NVR_RK3588_PATH="$(GIT_HOME_DIR)/$(REPO_NAME)/"
 BUILD_DIR_PATH="$(REPO_IPVS_NVR_RK3588_PATH)/src/Application/Build"
 DEPS_PREBUILT_INTERNAL_DIR="$(REPO_IPVS_NVR_RK3588_PATH)/deps/prebuilt/internal"
 DEPS_PREBUILT_THIRD_PARTY_DIR="$(REPO_IPVS_NVR_RK3588_PATH)/deps/prebuilt/third-party"
