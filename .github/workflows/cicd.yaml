@@ -18,6 +18,8 @@ jobs:
         run: |
           echo "Export necessary variables..."
           current_github_repository=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          echo "current_github_repository = $current_github_repository"
+          
           export GIT_HOME_DIR=/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace/$current_github_repository
           echo "GIT_HOME_DIR = $GIT_HOME_DIR"  # Make sure the variable is correctly exported
           
@@ -30,10 +32,6 @@ jobs:
     
       - name: Download build dependencies from JFrog
         run: |
-          echo "Check JFrog Server Connectivity..."
-          IP_ADDRESS="192.168.27.92"
-          ping -c 1 $IP_ADDRESS || echo "Device is not reachable."
-          
           echo "Downloading Dependencies..."
           curl -u admin:Neel@2822 -o $GIT_HOME_DIR/$current_github_repository/src/Application/Build/platform_upgrade.zip http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/target/platform_upgrade.zip
           curl -u admin:AKCpBtNTD6yAkngV6hWDtMhyRgDWynmqF7oiwzp7caQ51fDvCZhKpPt5CPkBDwc8WvTGZ33qA -o $GIT_HOME_DIR/$current_github_repository/src/Application/Build/Device_Client_Setup_8.7.52.exe http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe
