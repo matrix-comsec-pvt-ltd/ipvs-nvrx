@@ -16,10 +16,9 @@ jobs:
       
       - name: Preparing Environment
         run: |
-          echo "export GIT_HOME_DIR"
           current_github_repository=$(echo ${{ github.repository }} | cut -d'/' -f2)
-          export GIT_HOME_DIR="/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace/$current_github_repository"
-          echo "GIT_HOME_DIR=$GIT_HOME_DIR"  # Make sure the variable is correctly exported
+          export GIT_HOME_DIR=/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace/$current_github_repository
+          echo "GIT_HOME_DIR = $GIT_HOME_DIR"  # Make sure the variable is correctly exported
           
       - name: Checkout Repository
         uses: actions/checkout@v3
