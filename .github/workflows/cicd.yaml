@@ -3,7 +3,7 @@ name: Build and Deploy nvr_rk3588..
 on:
   push:
     branches:
-      - xyz
+      - main
 
 jobs:
   build:
