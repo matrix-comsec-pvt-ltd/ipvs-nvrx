@@ -8,27 +8,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    #env:
-      #token: ${{ secrets.MY_GITHUB_TOKEN }}
   
     steps:
       - name: Install Build Essentials
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          #sudo apt-get install -y build-essential
 
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          repository: matrix-comsec-pvt-ltd/ipvs-nvr-rk3588-app
+          repository: matrix-comsec-pvt-ltd/ipvs-nvr-app
           submodules: true
           token: ${{ secrets.MY_GITHUB_TOKEN }}
 
-      - name: Display files
+      - name: Display Environment
         run: |
-          echo "Cloned repository:"
+          echo "Current Directory is :"
+          pwd
+          
+          echo "Cloned repository is :"
           ls -la  # List files in the repository
-
-      #- name: Download Build Dependencies from JFrog
-      #  run: |
-      #    curl -u ${admin}:${Neel@2822} -o /home/runner/work/ipvs-nvr-rk3588-app/ipvs-nvr-rk3588-app/src/Application/Build/platform_upgrade.zip http://localhost:8082/artifactory/matcom-ipvs-nvr/rk3588/release-artifacts/platform/8.7.0/platform_upgrade.zip
+          
