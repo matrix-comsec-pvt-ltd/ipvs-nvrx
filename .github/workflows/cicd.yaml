@@ -35,9 +35,9 @@ jobs:
           ping -c 1 $IP_ADDRESS || echo "Device is not reachable."
           
           echo "Downloading Dependencies..."
-          curl -u admin:Neel@2822 -o "$GIT_HOME_DIR/$current_github_repository/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/target/platform_upgrade.zip"
-          curl -u admin:AKCpBtNTD6yAkngV6hWDtMhyRgDWynmqF7oiwzp7caQ51fDvCZhKpPt5CPkBDwc8WvTGZ33qA -o "$GIT_HOME_DIR/$current_github_repository/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe"
-          curl -u admin:Neel@2822 -o "$GIT_HOME_DIR/$current_github_repository/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/host/host.tar.xz"
+          curl -u admin:Neel@2822 -o $GIT_HOME_DIR/$current_github_repository/src/Application/Build/platform_upgrade.zip http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/target/platform_upgrade.zip
+          curl -u admin:AKCpBtNTD6yAkngV6hWDtMhyRgDWynmqF7oiwzp7caQ51fDvCZhKpPt5CPkBDwc8WvTGZ33qA -o $GIT_HOME_DIR/$current_github_repository/src/Application/Build/Device_Client_Setup_8.7.52.exe http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe
+          curl -u admin:Neel@2822 -o $GIT_HOME_DIR/$current_github_repository/src/Application/Build/host.tar.xz http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/host/host.tar.xz
 
           echo "Check Downloads..."
           cd "$GIT_HOME_DIR/$current_github_repository/src/Application/Build" && ls -al
