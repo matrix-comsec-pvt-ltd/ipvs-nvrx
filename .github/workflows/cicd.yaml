@@ -1,4 +1,4 @@
-name: Build and Deploy nvr_rk3588
+name: Build and Deploy nvr_rk3588...
 
 on:
   push:
