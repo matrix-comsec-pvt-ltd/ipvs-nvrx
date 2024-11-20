@@ -24,6 +24,9 @@ jobs:
 
       - name: Display Environment
         run: |
+          echo "Current Tree is :"
+          tree
+          
           echo "Current Directory is :"
           pwd
           
