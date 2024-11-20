@@ -16,6 +16,7 @@ jobs:
       
       - name: Preparing Environment
         run: |
+          echo "Export necessary variables..."
           current_github_repository=$(echo ${{ github.repository }} | cut -d'/' -f2)
           export GIT_HOME_DIR=/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace/$current_github_repository
           echo "GIT_HOME_DIR = $GIT_HOME_DIR"  # Make sure the variable is correctly exported
