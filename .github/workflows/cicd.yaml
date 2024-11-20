@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # This will use your self-hosted runner
+    runs-on: [self-hosted, 450094-1]  # This will use your self-hosted runner
   
     steps:
       - name: Install Build Essentials
@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "export GIT_HOME_DIR"
           current_github_repository=$(echo ${{ github.repository }} | cut -d'/' -f2)
-          export GIT_HOME_DIR="/home/runners/work/$current_github_repository"
+          export GIT_HOME_DIR="/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace/$current_github_repository"
           echo "GIT_HOME_DIR=$GIT_HOME_DIR"  # Make sure the variable is correctly exported
           
       - name: Checkout Repository
@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "Check JFrog Server Connectivity..."
           IP_ADDRESS="192.168.27.92"
-          ping -c 4 $IP_ADDRESS || echo "Device is not reachable."
+          ping -c 1 $IP_ADDRESS || echo "Device is not reachable."
           
           echo "Downloading Dependencies..."
           curl -u admin:Neel@2822 -o "$GIT_HOME_DIR/$current_github_repository/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/target/platform_upgrade.zip"
@@ -40,7 +40,7 @@ jobs:
           curl -u admin:Neel@2822 -o "$GIT_HOME_DIR/$current_github_repository/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/host/host.tar.xz"
 
           echo "Check Downloads..."
-          cd "$GIT_HOME_DIR/$current_github_repository/src/Application/Build"
+          cd "$GIT_HOME_DIR/$current_github_repository/src/Application/Build" && ls -al
           
           
           
