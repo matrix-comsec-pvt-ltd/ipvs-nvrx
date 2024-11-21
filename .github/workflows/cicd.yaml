@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Set/Export necessary variables..."
           echo "CURRENT_GITHUB_REPOSITORY=$(echo ${{ github.repository }} | cut -d'/' -f2)" >> $GITHUB_ENV
-          sleep 5
+          sleep 2
           
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -27,31 +27,21 @@ jobs:
     
       - name: Download build dependencies from JFrog
         run: |          
-          sleep 3
+          sleep 2
           echo "Downloading Dependencies..."
-          #curl -C - -L --fail -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_API_KEY }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe"
-          curl -u admin:AKCpBtNTD6yAkngV6hWDtMhyRgDWynmqF7oiwzp7caQ51fDvCZhKpPt5CPkBDwc8WvTGZ33qA -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe"
-          if [ $? -ne 0 ]; then
-              echo "Download failed. Retrying..."
-          fi
-          #sleep 3
-          #curl -C - -L --fail -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/target/platform_upgrade.zip"
-          #if [ $? -ne 0 ]; then
-          #    echo "Download failed. Retrying..."
-          #fi
-          #sleep 3
-          #curl -C - -L --fail -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/host/host.tar.xz"
-          #if [ $? -ne 0 ]; then
-          #    echo "Download failed. Retrying..."
-          #fi
-          sleep 3
+          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_API_KEY }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe"
+          sleep 2
+          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/target/platform_upgrade.zip"
+          sleep 2
+          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/productionbuild/8.7.0/rk3588/host/host.tar.xz"
+          sleep 2
 
       - name: Compile and Prepare Package
         run: |
           echo "Change directory & apply Make command"
           echo "Path: $GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY"
           cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && ls -al && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD='neel' release
-          sleep 5
+          sleep 2
 
       - name: Upload release artifacts to JFrog
         run: |
