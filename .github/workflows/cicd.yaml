@@ -14,7 +14,8 @@ jobs:
     steps:
       - name: Install Build Essentials
         run: |
-          sudo apt-get update
+          whoami
+          #sudo apt-get update
       
       - name: Preparing Environment
         run: |
@@ -40,6 +41,11 @@ jobs:
 
           echo "Check Downloads..."
           cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build" && ls -al
+
+      - name: Compile and Prepare Package
+        run: |
+          #cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
+          #make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
           
           
           
