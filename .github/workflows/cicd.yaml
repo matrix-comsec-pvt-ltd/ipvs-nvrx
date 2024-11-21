@@ -43,7 +43,8 @@ jobs:
 
       - name: Compile and Prepare Package
         run: |
-          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
+          echo "Change directory and apply Make command"
+          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY"
           make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
 
       - name: Upload release artifacts to JFrog
