@@ -1,4 +1,4 @@
-name: Build and Deploy nvr_rk3588.......
+name: Build and Deploy nvrx-rk3588
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
         run: |
           echo "Set/Export necessary variables..."
           export current_github_repository=$(echo ${{ github.repository }} | cut -d'/' -f2)
-          echo "current_github_repository = $current_github_repository"
+          echo "value of current_github_repository is : $current_github_repository"
           
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -31,9 +31,8 @@ jobs:
     
       - name: Download build dependencies from JFrog
         run: |
-          mkdir -p "$GIT_HOME_DIR/$current_github_repository/$current_github_repository/src/Application/Build"
-          echo "GIT_HOME_DIR: $GIT_HOME_DIR"
-          echo "Repository: $current_github_repository"
+          echo "value of GIT_HOME_DIR is : $GIT_HOME_DIR"
+          echo "value of current_github_repository is : $current_github_repository"
           
           echo "Downloading Dependencies..."
           curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_API_KEY }} -o "$GIT_HOME_DIR/$current_github_repository/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/productionbuild/8.7.52/Device_Client_Setup_8.7.52.exe"
