@@ -39,8 +39,7 @@ jobs:
         run: |
           echo "Change directory & apply Make command"
           echo "Path: $GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY"
-          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && ls -al
-          #cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
+          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && ls -al && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
 
       - name: Upload release artifacts to JFrog
         run: |
