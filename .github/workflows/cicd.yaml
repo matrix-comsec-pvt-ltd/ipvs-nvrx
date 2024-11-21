@@ -39,12 +39,14 @@ jobs:
         run: |
           echo "Change directory & apply Make command"
           echo "Path: $GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY"
-          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
+          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && ls -al
+          #cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
 
       - name: Upload release artifacts to JFrog
         run: |
-          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
-          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/NVR_RK3588H-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/productionbuild/2.2.0/rk3588/NVR_RK3588H-2.2.0.zip"
+          echo "Upload"
+          #cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
+          #curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/NVR_RK3588H-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/productionbuild/2.2.0/rk3588/NVR_RK3588H-2.2.0.zip"
           
           
           
