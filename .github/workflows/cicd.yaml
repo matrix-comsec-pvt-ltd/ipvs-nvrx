@@ -43,9 +43,9 @@ jobs:
 
       - name: Upload release artifacts to JFrog
         run: |
-          echo "Upload"
-          #cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
-          #curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/NVR_RK3588H-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/productionbuild/2.2.0/rk3588/NVR_RK3588H-2.2.0.zip"
+          echo "Uploading Artifacts..."
+          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
+          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/NVR_RK3588H-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/productionbuild/2.2.0/rk3588/NVR_RK3588H-2.2.0.zip"
           
           
           
