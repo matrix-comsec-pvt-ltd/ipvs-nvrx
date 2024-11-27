@@ -1,4 +1,4 @@
-name: C/C++test with Make....
+name: C/C++test with Make
 
 on:
   push:
@@ -58,7 +58,6 @@ jobs:
               -report /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport \
               -bdf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
               -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties \
-              -property report.format=xml,html,sarif \
               -publish
 
       # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
