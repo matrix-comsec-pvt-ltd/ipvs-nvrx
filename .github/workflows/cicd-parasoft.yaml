@@ -1,8 +1,8 @@
-name: C/C++test with Make
+name: C/C++test with Make...
 
 on:
   push:
-    branches: [ master, main ]
+    branches: main
 
 jobs:
   run-cpptest-make:
