@@ -1,4 +1,4 @@
-name: C/C++test with Make...
+name: C/C++test with Make....
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
 jobs:
   run-cpptest-make:
     name: Analyze project with parasoft C/C++test
-
     runs-on: self-hosted
 
     # Specifies required permissions for upload-sarif action
@@ -19,59 +18,59 @@ jobs:
       contents: read
 
     steps:
-    - name: Preparing Environment
+      - name: Preparing Environment
         run: |
           echo "Set/Export necessary variables..."
           echo "CURRENT_GITHUB_REPOSITORY=$(echo ${{ github.repository }} | cut -d'/' -f2)" >> $GITHUB_ENV
-
-    - name: Checkout Repository
+          
+      - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           repository: matrix-comsec-pvt-ltd/ipvs-nvr-app
           submodules: true
           token: ${{ secrets.MY_GITHUB_TOKEN }}
 
-    - name: Download build dependencies from JFrog
+      - name: Download build dependencies from JFrog
         run: |
           echo "Downloading Dependencies..."
           curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_API_KEY }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
           curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/target/platform_upgrade.zip"
           curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/host/host.tar.xz"
 
-    # Builds your Make project using 'cpptesttrace' to collect input data for code analysis. Be sure 'cpptesttrace' is available on $PATH.
-    - name: Compile Project and Collect Data for Code Analysis
-      run: |
-        cpptesttrace \
-        --cpptesttraceOutputFile=/opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
-        '--cpptesttraceTraceCommand=arm-hisiv400-linux-gnueabi-gcc|arm-hisiv400-linux-gnueabi-g++' \
-        --cpptesttraceProjectName=NVR_RK3588_NVRH make svnup appFinal guiFinal BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA
+      # Builds your Make project using 'cpptesttrace' to collect input data for code analysis. Be sure 'cpptesttrace' is available on $PATH.
+      - name: Compile Project and Collect Data for Code Analysis
+        run: |
+          cpptesttrace \
+          --cpptesttraceOutputFile=/opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
+          '--cpptesttraceTraceCommand=arm-hisiv400-linux-gnueabi-gcc|arm-hisiv400-linux-gnueabi-g++' \
+          --cpptesttraceProjectName=NVR_RK3588_NVRH make svnup appFinal guiFinal BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA
 
-    # Runs static code analysis
-    - name: Run Parasoft Static Code Analysis
-      run: |
-          cpptestcli \
-            -exclude '**/Build/**' \
-            -data /opt/parasoft/installation/workspace/NVR \
-            -resource NVR_RK3588_NVRH \
-            -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES \
-            -report /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport \
-            -bdf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
-            -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties \
-            -property report.format=xml,html,sarif \
-            -publish
+      # Runs static code analysis
+      - name: Run Parasoft Static Code Analysis
+        run: |
+            cpptestcli \
+              -exclude '**/Build/**' \
+              -data /opt/parasoft/installation/workspace/NVR \
+              -resource NVR_RK3588_NVRH \
+              -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES \
+              -report /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport \
+              -bdf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
+              -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties \
+              -property report.format=xml,html,sarif \
+              -publish
 
-    # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
-    - name: Upload report (SARIF)
-    # Ensures that the results are uploaded even if there’s a failure in the previous steps.
-      if: success()
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport/report.sarif
-
-    # Uploads an archive that includes all report files (.xml, .html, .sarif).
-    - name: Archive reports
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: CpptestReports
-        path: /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport*
+      # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
+      - name: Upload report (SARIF)
+      # Ensures that the results are uploaded even if there’s a failure in the previous steps.
+        if: success()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport/report.sarif
+  
+      # Uploads an archive that includes all report files (.xml, .html, .sarif).
+      - name: Archive reports
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CpptestReports
+          path: /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport*
