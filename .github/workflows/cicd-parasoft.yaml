@@ -8,6 +8,8 @@ jobs:
   run-cpptest-make:
     name: Analyze project with parasoft C/C++test
     runs-on: self-hosted
+    env:  # Environment variables for the entire job
+      GIT_HOME_DIR: "/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace"
 
     # Specifies required permissions for upload-sarif action
     permissions:
