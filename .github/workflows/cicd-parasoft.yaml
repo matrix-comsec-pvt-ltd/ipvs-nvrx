@@ -9,8 +9,8 @@ jobs:
     runs-on: self-hosted
     env:  # Environment variables for the entire job
       GIT_HOME_DIR: "/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace"
-      GIT_SSL_NO_VERIFY: true
-      CURL_CA_BUNDLE: /dev/null
+      #GIT_SSL_NO_VERIFY: true
+      #CURL_CA_BUNDLE: /dev/null
 
     # Specifies required permissions for upload-sarif action
     permissions:
