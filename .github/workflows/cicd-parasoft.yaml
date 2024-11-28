@@ -1,4 +1,4 @@
-name: C/C++test with Make
+name: Parasoft SCA of nvrx-rk3588
 
 on:
   push:
