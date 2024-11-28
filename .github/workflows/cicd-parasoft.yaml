@@ -42,6 +42,7 @@ jobs:
       # Builds your Make project using 'cpptesttrace' to collect input data for code analysis. Be sure 'cpptesttrace' is available on $PATH.
       - name: Compile Project and Collect Data for Code Analysis
         run: |
+          rm -rf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf
           cpptesttrace \
           --cpptesttraceOutputFile=/opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
           '--cpptesttraceTraceCommand=aarch64-linux-gcc|aarch64-linux-g++' \
@@ -54,7 +55,6 @@ jobs:
             rm -rf /opt/parasoft/installation/workspace/NVR/.metadata
             rm -rf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH/
             rm -rf /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport/
-            rm -rf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf
             cpptestcli \
               -exclude '**/Build/**' \
               -data /opt/parasoft/installation/workspace/NVR \
