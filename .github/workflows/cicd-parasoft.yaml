@@ -1,8 +1,7 @@
 name: Parasoft SCA of nvrx-rk3588
 
 on:
-  push:
-    branches: main
+  workflow_dispatch:  # This triggers the workflow manually
 
 jobs:
   run-cpptest-make:
@@ -54,7 +53,7 @@ jobs:
               -exclude '**/Build/**' \
               -data /opt/parasoft/installation/workspace/NVR \
               -resource NVR_RK3588_NVRH \
-              -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES \
+              -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES_FOR_POC_GITHUB \
               -report /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport \
               -bdf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
               -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties \
