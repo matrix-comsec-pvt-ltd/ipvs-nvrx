@@ -44,7 +44,7 @@ jobs:
         run: |
           cpptesttrace \
           --cpptesttraceOutputFile=/opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
-          '--cpptesttraceTraceCommand=arm-hisiv400-linux-gnueabi-gcc|arm-hisiv400-linux-gnueabi-g++' \
+          '--cpptesttraceTraceCommand=aarch64-linux-gcc|aarch64-linux-g++' \
           --cpptesttraceProjectName=NVR_RK3588_NVRH make svnup appFinal guiFinal BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA
 
       # Runs static code analysis
