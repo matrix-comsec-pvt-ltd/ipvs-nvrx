@@ -63,8 +63,7 @@ jobs:
               -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES_FOR_POC_GITHUB \
               -report /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport \
               -bdf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
-              -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties \
-              -publish
+              -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties
             ls -al /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport
 
       # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
