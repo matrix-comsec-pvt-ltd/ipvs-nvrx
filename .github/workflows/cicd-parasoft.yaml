@@ -11,6 +11,8 @@ jobs:
       GIT_HOME_DIR: "/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace"
       #GIT_SSL_NO_VERIFY: true
       #CURL_CA_BUNDLE: /dev/null
+      ACTIONS_STEP_DEBUG: true
+      ACTIONS_RUNNER_DEBUG: true
 
     # Specifies required permissions for upload-sarif action
     permissions:
