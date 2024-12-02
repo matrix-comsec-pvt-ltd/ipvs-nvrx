@@ -46,36 +46,36 @@ jobs:
       # Builds your Make project using 'cpptesttrace' to collect input data for code analysis. Be sure 'cpptesttrace' is available on $PATH.
       - name: Compile Project and Collect Data for Code Analysis
         run: |
-          rm -rf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf
+          rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH.bdf
           cpptesttrace \
-          --cpptesttraceOutputFile=/opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
+          --cpptesttraceOutputFile=/home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH.bdf \
           '--cpptesttraceTraceCommand=aarch64-linux-gcc|aarch64-linux-g++' \
           --cpptesttraceProjectName=NVR_RK3588_NVRH make svnup appFinal guiFinal BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA
 
       # Runs static code analysis
       - name: Run Parasoft Static Code Analysis
         run: |
-            rm -rf /opt/parasoft/installation/workspace/NVR/.cpptest
-            rm -rf /opt/parasoft/installation/workspace/NVR/.metadata
-            rm -rf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH/
-            rm -rf /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport/
+            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/.cpptest
+            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/.metadata
+            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH/
+            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/
             cpptestcli \
               -exclude '**/Build/**' \
-              -data /opt/parasoft/installation/workspace/NVR \
+              -data /home/neeldharsandiya/neel/parasoft_workspace/NVR \
               -resource NVR_RK3588_NVRH \
               -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES_FOR_POC_GITHUB \
-              -report /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport \
-              -bdf /opt/parasoft/installation/workspace/NVR/NVR_RK3588_NVRH.bdf \
-              -localsettings /opt/parasoft/installation/workspace/NVR/localsettings/NVR_RK3588_NVRH.properties
-            ls -al /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport
-            chmod -R 777 /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport
+              -report /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport \
+              -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH.bdf \
+              -localsettings /home/neeldharsandiya/neel/parasoft_workspace/NVR/localsettings/NVR_RK3588_NVRH.properties
+            chmod -R 777 /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
+            ls -al /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
 
       # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
       - name: Upload report (SARIF)
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport/report.sarif
+          sarif_file: /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/report.sarif
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           wait-for-processing: true
   
@@ -85,5 +85,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CpptestReports
-          path: /opt/parasoft/installation/workspace/NVR/StaticAnalysisReport/*
+          path: /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/*
           token: ${{ secrets.MY_GITHUB_TOKEN }}
