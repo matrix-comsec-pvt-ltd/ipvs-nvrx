@@ -20,7 +20,7 @@ jobs:
         with:
           repository: matrix-comsec-pvt-ltd/ipvs-nvr-app
           submodules: true
-          token: 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
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
     
       - name: Download build dependencies from JFrog
         run: |          
