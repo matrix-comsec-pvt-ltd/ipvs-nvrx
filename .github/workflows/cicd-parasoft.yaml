@@ -59,6 +59,7 @@ jobs:
               -report /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport \
               -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH_POC_GITHUB.bdf \
               -localsettings /home/neeldharsandiya/neel/parasoft_workspace/NVR/localsettings/config.properties
+              -publish
             chmod -R 777 /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
             ls -al /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
 
