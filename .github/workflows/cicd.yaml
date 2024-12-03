@@ -20,14 +20,14 @@ jobs:
         with:
           repository: matrix-comsec-pvt-ltd/ipvs-nvr-app
           submodules: true
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          token: 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
     
       - name: Download build dependencies from JFrog
         run: |          
           echo "Downloading Dependencies..."
-          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_API_KEY }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
-          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/target/platform_upgrade.zip"
-          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/host/host.tar.xz"
+          curl -u "admin:cmVmdGtuOjAxOjE3NjQ3NDMzODI6UXFLS2RoZDZrNmpUd2s5M3ptU3hMM2lmQ3lR" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
+          curl -u "admin:Neel@2822" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/target/platform_upgrade.zip"
+          curl -u "admin:Neel@2822" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/host/host.tar.xz"
       
       - name: Compile and Prepare Package
         run: |
@@ -39,6 +39,6 @@ jobs:
         run: |
           echo "Uploading Artifacts..."
           cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
-          curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/NVR_RK3588H-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/NVR_RK3588H-2.2.0.zip"
+          curl -u "admin:Neel@2822" -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/NVR_RK3588H-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/NVR_RK3588H-2.2.0.zip"
           echo "Artifacts Uploaded Successfully"
           
