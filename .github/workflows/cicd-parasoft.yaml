@@ -58,7 +58,7 @@ jobs:
               -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES_FOR_POC_GITHUB \
               -report /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport \
               -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH_POC_GITHUB.bdf \
-              -localsettings /home/neeldharsandiya/neel/parasoft_workspace/NVR/localsettings/config.properties
+              -localsettings /home/neeldharsandiya/neel/parasoft_workspace/NVR/localsettings/config.properties \
               -publish
             chmod -R 777 /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
             ls -al /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
