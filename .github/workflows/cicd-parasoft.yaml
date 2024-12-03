@@ -9,11 +9,6 @@ jobs:
     runs-on: self-hosted
     env:  # Environment variables for the entire job
       GIT_HOME_DIR: "/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace"
-      #GIT_SSL_NO_VERIFY: true
-      #CURL_CA_BUNDLE: /dev/null
-      #ACTIONS_RUNNER_DEBUG: true
-      # increase the logging verbosity
-      ACTIONS_STEP_DEBUG: true
 
     # Specifies required permissions for upload-sarif action
     permissions:
@@ -43,29 +38,26 @@ jobs:
           curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/target/platform_upgrade.zip"
           curl -u ${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/host/host.tar.xz"
 
-      # Builds your Make project using 'cpptesttrace' to collect input data for code analysis. Be sure 'cpptesttrace' is available on $PATH.
+      - name: CleanUp
+        run: |
+          cd /home/neeldharsandiya/neel/parasoft_workspace/NVR/ && rm -rf NVR_RK3588_NVRH_POC_GITHUB.bdf .cpptest .metadata NVR_RK3588_NVRH_POC_GITHUB/ StaticAnalysisReport/
+        
       - name: Compile Project and Collect Data for Code Analysis
         run: |
-          rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH.bdf
           cpptesttrace \
-          --cpptesttraceOutputFile=/home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH.bdf \
+          --cpptesttraceOutputFile=/home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH_POC_GITHUB.bdf \
           '--cpptesttraceTraceCommand=aarch64-linux-gcc|aarch64-linux-g++' \
-          --cpptesttraceProjectName=NVR_RK3588_NVRH make svnup appFinal guiFinal BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA
+          --cpptesttraceProjectName=NVR_RK3588_NVRH_POC_GITHUB make svnup appFinal guiFinal BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA
 
-      # Runs static code analysis
       - name: Run Parasoft Static Code Analysis
         run: |
-            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/.cpptest
-            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/.metadata
-            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH/
-            rm -rf /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/
             cpptestcli \
               -exclude '**/Build/**' \
               -data /home/neeldharsandiya/neel/parasoft_workspace/NVR \
-              -resource NVR_RK3588_NVRH \
+              -resource NVR_RK3588_NVRH_POC_GITHUB \
               -config dtp://NVR_Matrix_C_OWASP_UPDATED_RULES_FOR_POC_GITHUB \
               -report /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport \
-              -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH.bdf \
+              -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH_POC_GITHUB.bdf \
               -localsettings /home/neeldharsandiya/neel/parasoft_workspace/NVR/localsettings/config.properties
             chmod -R 777 /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
             ls -al /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport
@@ -77,7 +69,7 @@ jobs:
         with:
           sarif_file: /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/report.sarif
   
-      # Uploads an archive that includes all report files (.xml, .html, .sarif).
+      # Uploads an archive that includes all report files (.xml, .html, .sarif, ...).
       - name: Archive reports
         if: always()
         uses: actions/upload-artifact@v4
