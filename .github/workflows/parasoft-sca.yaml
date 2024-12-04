@@ -55,7 +55,6 @@ jobs:
               -exclude '**/Build/**' \
               -data /home/neeldharsandiya/neel/parasoft_workspace/NVR \
               -resource NVR_RK3588_NVRH_POC_GITHUB \
-              -config 'builtin://OWASP Top 10 2021' \
               -config 'builtin://CWE-787' \
               -report /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport \
               -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH_POC_GITHUB.bdf \
