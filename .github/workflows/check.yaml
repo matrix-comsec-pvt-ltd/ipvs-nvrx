@@ -10,14 +10,15 @@ jobs:
     env:  # Environment variables for the entire job
       GIT_HOME_DIR: "/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace"
 
-      - name: Check for 'error' severity violations in SARIF report
-        run: |
-          cd /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/
-          # Check if there are any 'error' level issues in the SARIF report
-          errors=$(jq '.runs[0].results[] | select(.level == "error")' report.sarif)
-          if [ ! -z "$errors" ]; then
-            echo "Found errors in SARIF report. Failing the build."
-            exit 1  # This will fail the build if errors are found
-          else
-            echo "No 'error' level violations found. Build passes."
-          fi
+    steps:
+    - name: Check for 'error' severity violations in SARIF report
+      run: |
+        cd /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport/
+        # Check if there are any 'error' level issues in the SARIF report
+        errors=$(jq '.runs[0].results[] | select(.level == "error")' report.sarif)
+        if [ ! -z "$errors" ]; then
+          echo "Found errors in SARIF report. Failing the build."
+          exit 1  # This will fail the build if errors are found
+        else
+          echo "No 'error' level violations found. Build passes."
+        fi
