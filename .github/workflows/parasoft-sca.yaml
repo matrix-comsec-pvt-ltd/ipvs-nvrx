@@ -84,8 +84,8 @@ jobs:
           # Check if there are any 'error' level issues in the SARIF report
           errors=$(jq '.runs[0].results[] | select(.level == "error")' report.sarif)
           if [ ! -z "$errors" ]; then
-            echo "Found errors in SARIF report. Failing the build."
+            echo "*** Found errors in SARIF report. Failing the build. ***"
             exit 1  # This will fail the build if errors are found
           else
-            echo "No 'error' level violations found. Build passes."
+            echo "*** No 'error' level violations found. Build passes. ***"
           fi
