@@ -55,7 +55,7 @@ jobs:
               -exclude '**/Build/**' \
               -data /home/neeldharsandiya/neel/parasoft_workspace/NVR \
               -resource NVR_RK3588_NVRH_POC_GITHUB \
-              -config 'builtin://CWE-787' \
+              -config 'dtp://NVR_Matrix_C_OWASP_UPDATED_RULES_FOR_POC_GITHUB' \
               -report /home/neeldharsandiya/neel/parasoft_workspace/NVR/StaticAnalysisReport \
               -bdf /home/neeldharsandiya/neel/parasoft_workspace/NVR/NVR_RK3588_NVRH_POC_GITHUB.bdf \
               -localsettings /home/neeldharsandiya/neel/parasoft_workspace/NVR/localsettings/config.properties \
