@@ -25,9 +25,9 @@ jobs:
       - name: Download build dependencies from JFrog
         run: |          
           echo "Downloading Dependencies..."
-          curl -u "admin:cmVmdGtuOjAxOjE3NjQ3NDMzODI6UXFLS2RoZDZrNmpUd2s5M3ptU3hMM2lmQ3lR" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
-          curl -u "admin:Neel@2822" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/target/platform_upgrade.zip"
-          curl -u "admin:Neel@2822" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-platform-prod-release/8.7.0/rk3588h/host/host.tar.xz"
+          curl -u "admin:cmVmdGtuOjAxOjE3NjU5NzQ3ODE6Zndrc0ZWOGd3RzRnWnZLU1JkOGlod1Q2bFE3" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/ui/login/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
+          curl -u "admin:Admin@123" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/ui/login/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/platform_upgrade.zip"
+          curl -u "admin:Admin@123" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/ui/login/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/host.tar.xz"
       
       - name: Compile and Prepare Package
         run: |
