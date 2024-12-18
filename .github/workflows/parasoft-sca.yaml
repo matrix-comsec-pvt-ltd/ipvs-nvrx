@@ -27,7 +27,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          repository: matrix-comsec-pvt-ltd/ipvs-nvr-app
+          repository: matrix-comsec-pvt-ltd/ipvs-nvrx
           submodules: true
           token: ${{ secrets.MY_GITHUB_TOKEN }}
 
