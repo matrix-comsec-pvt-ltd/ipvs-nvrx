@@ -5,10 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # This will use your self-hosted runner
-    env:  # Environment variables for the entire job
-      GIT_HOME_DIR: "/home/neeldharsandiya/neel/selfhostedrunners/actions-runner/ndworkspace"
-  
+    runs-on: self-hosted  # This will use your self-hosted runner  
     steps:
       - name: Preparing Environment
         run: |
@@ -25,20 +22,18 @@ jobs:
       - name: Download build dependencies from JFrog
         run: |          
           echo "Downloading Dependencies..."
-          curl -u "admin:cmVmdGtuOjAxOjE3NjU5NzQ3ODE6Zndrc0ZWOGd3RzRnWnZLU1JkOGlod1Q2bFE3" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
-          curl -u "admin:Admin@123" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/platform_upgrade.zip"
-          curl -u "admin:Admin@123" -o "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/host.tar.xz" "http://192.168.27.92:8082/artifactory/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/host.tar.xz"
+          curl -u "admin:cmVmdGtuOjAxOjE3NjU5NzQ3ODE6Zndrc0ZWOGd3RzRnWnZLU1JkOGlod1Q2bFE3" -o "$GITHUB_WORKSPACE/deps/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
+          curl -u "admin:Admin@123" -o "$GITHUB_WORKSPACE/deps/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/platform_upgrade.zip"
       
       - name: Compile and Prepare Package
         run: |
           echo "Change directory & apply Make command"
-          echo "Path: $GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY"
-          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY" && ls -al && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
+          echo "Path: $GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE" && ls -al && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
       
       - name: Upload release artifacts to JFrog
         run: |
           echo "Uploading Artifacts..."
-          cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
-          curl -u "admin:Admin@123" -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
+          curl -u "admin:Admin@123" -T "$GITHUB_WORKSPACE/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
           echo "Artifacts Uploaded Successfully"
           
