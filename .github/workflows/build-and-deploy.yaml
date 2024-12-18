@@ -39,6 +39,6 @@ jobs:
         run: |
           echo "Uploading Artifacts..."
           cd "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build"
-          curl -u "admin:Neel@2822" -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
+          curl -u "admin:Admin@123" -T "$GIT_HOME_DIR/$CURRENT_GITHUB_REPOSITORY/$CURRENT_GITHUB_REPOSITORY/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
           echo "Artifacts Uploaded Successfully"
           
