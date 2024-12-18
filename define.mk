@@ -71,7 +71,7 @@ endif
 #########################################################################
 # SVN repository URL
 ##SVN_REPO_URL=svn://192.168.100.5
-REPO_IPVS_NVR_RK3588_PATH:=$(shell pwd)
+REPO_IPVS_NVR_RK3588_PATH:=$(shell git rev-parse --show-toplevel)
 BUILD_DIR_PATH="$(REPO_IPVS_NVR_RK3588_PATH)/src/Application/Build"
 DEPS_PREBUILT_INTERNAL_DIR="$(REPO_IPVS_NVR_RK3588_PATH)/deps/prebuilt/internal"
 DEPS_PREBUILT_THIRD_PARTY_DIR="$(REPO_IPVS_NVR_RK3588_PATH)/deps/prebuilt/third-party"
