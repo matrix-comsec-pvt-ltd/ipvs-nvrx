@@ -18,8 +18,9 @@ jobs:
         run: |          
           echo "Downloading Dependencies..."
           echo "$GITHUB_WORKSPACE"
-          curl -u "admin:cmVmdGtuOjAxOjE3NjU5NzQ3ODE6Zndrc0ZWOGd3RzRnWnZLU1JkOGlod1Q2bFE3" -o "$GITHUB_WORKSPACE/deps/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
-          curl -u "admin:Admin@123" -o "$GITHUB_WORKSPACE/deps/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/platform_upgrade.zip"
+          mkdir -p $GITHUB_WORKSPACE/build/deps 
+          curl -u "admin:cmVmdGtuOjAxOjE3NjU5NzQ3ODE6Zndrc0ZWOGd3RzRnWnZLU1JkOGlod1Q2bFE3" -o "$GITHUB_WORKSPACE/build/deps/Device_Client_Setup_8.7.52.exe" "http://192.168.27.92:8082/artifactory/ipvs-nvr-device-client-prod-release/8.7.52/Device_Client_Setup_8.7.52.exe"
+          curl -u "admin:Admin@123" -o "$GITHUB_WORKSPACE/build/deps/platform_upgrade.zip" "http://192.168.27.92:8082/artifactory/ipvs-bsp-nvrx-rk3588-prod-release/8.7.0/platform_upgrade.zip"
       
       - name: Compile and Prepare Package
         run: |
