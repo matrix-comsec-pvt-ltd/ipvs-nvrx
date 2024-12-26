@@ -9,17 +9,19 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: check connection
-        run: |
-          ping -c 4 192.168.103.10
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: 192.168.103.10
-          server_port: 25
-          #username: ${{ secrets.SMTP_USERNAME }}
-          #password: ${{ secrets.SMTP_PASSWORD }}
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.GMAIL_ID }}
+          password: ${{ secrets.GMAIL_PASSWORD }}
           subject: "New Tag Created: ${{ github.ref }}"
-          body: "A new tag has been created in the repository: ${{ github.repository }}.\nTag: ${{ github.ref_name }}"
-          to: neel.dharsandiya@matrixrd.org
-          from: github@matrixrd.org
+          body: |
+            A new tag has been created in the repository: ${{ github.repository }}.
+            Tag: ${{ github.ref_name }}
+            URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+          to: pragya.dayal@matrixcomsec.com
+          from: ${{ secrets.GMAIL_ID }}
+          
+
