@@ -1,0 +1,22 @@
+name: Notify on Tag Creation
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: 192.168.103.10
+          server_port: 25
+          #username: ${{ secrets.SMTP_USERNAME }}
+          #password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "New Tag Created: ${{ github.ref }}"
+          body: "A new tag has been created in the repository: ${{ github.repository }}.\nTag: ${{ github.ref_name }}"
+          to: neel.dharsandiya@matrixrd.org
+          from: github@matrixrd.org
