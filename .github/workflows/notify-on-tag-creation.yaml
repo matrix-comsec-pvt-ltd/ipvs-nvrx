@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: check connection
         run: |
-          ping -c 192.168.103.10
+          ping -c 4 192.168.103.10
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
         with:
