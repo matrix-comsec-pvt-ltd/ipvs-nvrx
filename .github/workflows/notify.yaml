@@ -1,10 +1,18 @@
-name: Notify on Tag Creation
+name: email notification
 
 on:
   push:
     tags:
       - '*'
-
+  delete:
+    tags:
+      - '*'
+    branches:
+      - '*'
+  create:
+    branches:
+      - '*'
+    
 jobs:
   notify:
     runs-on: ubuntu-latest
