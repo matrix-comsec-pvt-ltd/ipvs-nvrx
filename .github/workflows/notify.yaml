@@ -1,4 +1,4 @@
-name: email notification
+name: email notification...
 
 on:
   push:
