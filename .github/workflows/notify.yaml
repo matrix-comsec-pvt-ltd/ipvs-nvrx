@@ -32,8 +32,7 @@ jobs:
             echo "url=${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.ref }}" >> $GITHUB_ENV
           fi
       - name: Send Gmail Notification
-        #uses: dawidd6/action-send-mail@v3
-        uses: s0/gitlab-gmail-action@v1.0.0
+        uses: dawidd6/action-send-mail@v3
         with:
           to: 'pragya.dayal@matrixcomsec.com' # recipient's email
           subject: ${{ env.subject }}
