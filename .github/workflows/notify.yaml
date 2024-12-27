@@ -17,19 +17,31 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send Email Notification
-        uses: dawidd6/action-send-mail@v3
+      - name: Determine Event Details
+        id: event-details
+        run: |
+          if [[ "${{ github.event.ref_type }}" == "tag" ]]; then
+            echo "type=Tag" >> $GITHUB_ENV
+            echo "ref=${{ github.event.ref }}" >> $GITHUB_ENV
+            echo "subject=New Tag Created: ${{ github.event.ref }}" >> $GITHUB_ENV
+            echo "url=${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.event.ref }}" >> $GITHUB_ENV
+          elif [[ "${{ github.event.ref_type }}" == "branch" ]]; then
+            echo "type=Branch" >> $GITHUB_ENV
+            echo "ref=${{ github.event.ref }}" >> $GITHUB_ENV
+            echo "subject=New Branch Created: ${{ github.event.ref }}" >> $GITHUB_ENV
+            echo "url=${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.ref }}" >> $GITHUB_ENV
+          fi
+      - name: Send Gmail Notification
+        #uses: dawidd6/action-send-mail@v3
+        uses: google-github-actions/send-gmail@v0
         with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.GMAIL_ID }}
-          password: ${{ secrets.GMAIL_PASSWORD }}
-          subject: "New Tag Created: ${{ github.ref }}"
+          to: 'pragya.dayal@matrixcomsec.com' # recipient's email
+          subject: ${{ env.subject }}
           body: |
-            A new tag has been created in the repository: ${{ github.repository }}.
-            Tag: ${{ github.ref_name }}
-            URL: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
-          to: pragya.dayal@matrixcomsec.com
-          from: ${{ secrets.GMAIL_ID }}
+            A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
+
+            You can view it here: ${{ env.url }}
+          client_id: ${{ secrets.GMAIL_ID }}
+          client_secret: ${{ secrets.GMAIL_PASSWORD }}
           
 
