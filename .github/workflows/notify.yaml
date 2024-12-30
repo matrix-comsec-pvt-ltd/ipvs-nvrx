@@ -35,14 +35,15 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           # server details
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.GMAIL_ID }}
-          password: ${{ secrets.GMAIL_PASSWORD }}
+          #server_address: smtp.gmail.com
+          #server_port: 587
+          #username: ${{ secrets.GMAIL_ID }}
+          #password: ${{ secrets.GMAIL_PASSWORD }}
           
           # format
           to: 'pragya.dayal@matrixcomsec.com' # recipient's email
-          from: ${{ secrets.GMAIL_ID }}
+          #from: ${{ secrets.GMAIL_ID }}
+          from: neeldharsandiya123@gmail.com
           subject: ${{ env.subject }}
           body: |
             A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
