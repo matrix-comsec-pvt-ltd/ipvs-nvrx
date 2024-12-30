@@ -35,8 +35,8 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           # server details
-          #server_address: smtp.gmail.com
-          #server_port: 587
+          server_address: smtp.gmail.com
+          server_port: 587
           #username: ${{ secrets.GMAIL_ID }}
           #password: ${{ secrets.GMAIL_PASSWORD }}
           
