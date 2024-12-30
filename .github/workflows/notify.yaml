@@ -34,8 +34,10 @@ jobs:
           fi
 
       - name: Check for Artifact URL
-        if: ${{ github.event.inputs.artifact_url != '' }}
-        run: echo "artifact_url=${{ github.event.inputs.artifact_url }}" >> $GITHUB_ENV
+        run: |
+          if [[ -n "${{ github.event.inputs.artifact_url }}" ]]; then
+            echo "artifact_url=${{ github.event.inputs.artifact_url }}" >> $GITHUB_ENV
+          fi
         
       - name: Send Gmail Notification
         uses: dawidd6/action-send-mail@v3
