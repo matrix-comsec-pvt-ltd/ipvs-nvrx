@@ -2,6 +2,10 @@ name: email notification...
 
 on:
   workflow_dispatch:
+    inputs:
+      artifact_url:
+        description: 'URL of the uploaded artifact'
+        required: false
   push:
     tags:
       - '*'
