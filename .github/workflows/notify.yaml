@@ -43,7 +43,7 @@ jobs:
           
           # format
           from: ${{ secrets.GMAIL_ID }}
-          to: 'neeldharsandiya149@gmail.com'
+          to: 'neel.dharsandiya@matrixcomsec.com'
           subject: ${{ env.subject }}
           body: |
             A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
