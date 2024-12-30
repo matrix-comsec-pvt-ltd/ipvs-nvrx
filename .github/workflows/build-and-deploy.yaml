@@ -44,12 +44,12 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            github.rest.actions.createWorkflowDispatch({
+            await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'notify.yaml',
               ref: context.ref,
               inputs: {
-                artifact_url: process.env.artifact_url
+                artifact_url: process.env.artifact_url || ''
               }
             });
