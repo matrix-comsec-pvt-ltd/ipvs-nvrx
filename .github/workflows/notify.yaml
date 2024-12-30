@@ -31,6 +31,7 @@ jobs:
             echo "subject=New Branch Created: ${{ github.event.ref }}" >> $GITHUB_ENV
             echo "url=${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.ref }}" >> $GITHUB_ENV
           fi
+      
       - name: Send Gmail Notification
         uses: dawidd6/action-send-mail@v3
         with:
@@ -41,8 +42,8 @@ jobs:
           password: ${{ secrets.GMAIL_PASSWORD }}
           
           # format
-          to: 'neel.dharsandiya@matrixcomsec.com' # recipient's email
           from: ${{ secrets.GMAIL_ID }}
+          to: 'neel.dharsandiya@matrixcomsec.com'
           subject: ${{ env.subject }}
           body: |
             A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
