@@ -61,3 +61,4 @@ jobs:
         env:
           ARTIFACT_UPLOADED: ${{ steps.upload-artifact.outcome == 'success' }}
           ARTIFACT_PATH: ${{ env.ARTIFACT_PATH }}
+          REPOSITORY_NAME: ${{ github.repository }}
