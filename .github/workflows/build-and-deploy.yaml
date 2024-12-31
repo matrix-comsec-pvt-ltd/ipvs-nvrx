@@ -38,6 +38,7 @@ jobs:
           ARTIFACT_PATH="http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
           curl -u "admin:Admin@123" -T "$GITHUB_WORKSPACE/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "$ARTIFACT_PATH"
           echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> $GITHUB_ENV
+          echo "repo_name=${{ github.repository }}" >> $GITHUB_ENV
           echo "Artifacts Uploaded Successfully"
         continue-on-error: true
 
