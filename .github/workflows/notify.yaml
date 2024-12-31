@@ -1,11 +1,6 @@
-name: email notification
+name: email notification...
 
 on:
-  workflow_dispatch:
-    inputs:
-      artifact_url:
-        description: 'URL of the uploaded artifact'
-        required: false
   push:
     tags:
       - '*'
@@ -17,7 +12,7 @@ on:
   create:
     branches:
       - '*'
-
+    
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -36,27 +31,7 @@ jobs:
             echo "subject=New Branch Created: ${{ github.event.ref }}" >> $GITHUB_ENV
             echo "url=${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.ref }}" >> $GITHUB_ENV
           fi
-
-      - name: Check for Artifact URL
-        run: |
-          if [[ -n "${{ github.event.inputs.artifact_url }}" ]]; then
-            echo "artifact_url=${{ github.event.inputs.artifact_url }}" >> $GITHUB_ENV
-          fi
-        
-      - name: Set Body for Email Notification
-        id: set-body
-        run: |
-          if [[ -n "${{ env.artifact_url }}" ]]; then
-            echo "body=A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
-            You can view it here: ${{ env.url }}
-            
-            Additionally, the artifact has been uploaded to JFrog and is available at:
-            ${{ env.artifact_url }}" >> $GITHUB_ENV
-          else
-            echo "body=A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
-            You can view it here: ${{ env.url }}" >> $GITHUB_ENV
-          fi
-        
+      
       - name: Send Gmail Notification
         uses: dawidd6/action-send-mail@v3
         with:
@@ -68,6 +43,8 @@ jobs:
           
           # format
           from: ${{ secrets.GMAIL_ID }}
-          to: 'neel.dharsandiya@matrixcomsec.com'
-          subject: ${{ env.subject }}  # Ensure subject is set from environment variable
-          body: ${{ env.body }}  # Use the body text set in the previous step
+          to: 'neeldharsandiya149@gmail.com'
+          subject: ${{ env.subject }}
+          body: |
+            A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
+            You can view it here: ${{ env.url }}
