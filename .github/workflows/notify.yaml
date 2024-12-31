@@ -30,15 +30,25 @@ jobs:
           if [[ "${{ github.event.ref_type }}" == "tag" ]]; then
             echo "type=Tag" >> $GITHUB_ENV
             echo "ref=${{ github.event.ref }}" >> $GITHUB_ENV
-            echo "subject=New Tag Created: ${{ github.event.ref }}" >> $GITHUB_ENV
             echo "url=${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.event.ref }}" >> $GITHUB_ENV
           elif [[ "${{ github.event.ref_type }}" == "branch" ]]; then
             echo "type=Branch" >> $GITHUB_ENV
             echo "ref=${{ github.event.ref }}" >> $GITHUB_ENV
-            echo "subject=New Branch Created: ${{ github.event.ref }}" >> $GITHUB_ENV
             echo "url=${{ github.server_url }}/${{ github.repository }}/tree/${{ github.event.ref }}" >> $GITHUB_ENV
           fi
-
+          
+      - name: Compose Email Subject
+        run: |
+          if [[ "${{ github.event.inputs.artifact_uploaded }}" == "true" ]]; then
+            echo "subject=Build Completed and Artifact Uploaded to JFrog" >> $GITHUB_ENV
+          elif [[ "${{ github.event.inputs.artifact_uploaded }}" == "false" ]]; then
+            if [[ "${{ github.event.ref_type }}" == "tag" ]]; then
+              echo "subject=New Tag Created: ${{ github.event.ref }}" >> $GITHUB_ENV
+            elif [[ "${{ github.event.ref_type }}" == "branch" ]]; then
+              echo "subject=New Branch Created: ${{ github.event.ref }}" >> $GITHUB_ENV
+            fi
+          fi
+          
       - name: Compose Email Body
         id: compose-body
         run: |
