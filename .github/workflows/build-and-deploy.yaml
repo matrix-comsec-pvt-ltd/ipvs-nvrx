@@ -59,6 +59,6 @@ jobs:
               }
             });
         env:
-          ARTIFACT_UPLOADED: ${{ steps.upload-artifact.outcome == 'success' }}
-          ARTIFACT_PATH: ${{ env.ARTIFACT_PATH }}
-          REPOSITORY_NAME: ${{ github.repository }}
+          artifact_uploaded: ${{ steps.upload-artifact.outcome == 'success' }}
+          artifact_path: ${{ env.ARTIFACT_PATH }}
+          repo_name: ${{ github.repository }}
