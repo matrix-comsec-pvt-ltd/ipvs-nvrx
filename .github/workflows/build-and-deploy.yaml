@@ -32,23 +32,27 @@ jobs:
           cd "$GITHUB_WORKSPACE" && ls -al && make BOARD_TYPE=RK3588_NVRH RELEASE_TYPE=QA PASSWORD=neel release
       
       - name: Upload release artifacts to JFrog
+        id: upload-artifact
         run: |
           echo "Uploading Artifacts..."
           ARTIFACT_PATH="http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
           curl -u "admin:Admin@123" -T "$GITHUB_WORKSPACE/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "$ARTIFACT_PATH"
           echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> $GITHUB_ENV
           echo "Artifacts Uploaded Successfully"
+        continue-on-error: true
 
       - name: Trigger Notify Workflow
         uses: actions/github-script@v6
         with:
           script: |
+            const artifactUploaded = ${'{'} steps['upload-artifact'].outcome === 'success' ${'}'};
             github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: "notify.yaml",
               ref: context.ref,
               inputs: {
-                artifact_path: process.env.ARTIFACT_PATH
+                artifact_path: artifactUploaded ? process.env.ARTIFACT_PATH : '',
+                artifact_uploaded: artifactUploaded.toString()
               }
             })
