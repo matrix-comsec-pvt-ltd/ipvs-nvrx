@@ -9,6 +9,9 @@ on:
       artifact_uploaded:
         description: "Whether the artifact was successfully uploaded"
         required: true
+      repo_name:
+        description: "Repository name"
+        required: true
   push:
     tags:
       - '*'
@@ -52,13 +55,11 @@ jobs:
       - name: Compose Email Body
         id: compose-body
         run: |
+          repo_name="${{ github.event.inputs.repo_name }}"
           if [[ "${{ github.event.inputs.artifact_uploaded }}" == "true" ]]; then
-            echo "body=An artifact was uploaded to JFrog.
-            You can download it here: ${{ github.event.inputs.artifact_path }}" >> $GITHUB_ENV
+            echo "body=An artifact for $repo_name was uploaded to JFrog. You can download it here: ${{ github.event.inputs.artifact_path }}" >> $GITHUB_ENV
           else
-            echo "body=A new ${{ env.type }} named '${{ env.ref }}' was created in the repository.
-            You can view it here: ${{ env.url }}.
-            Artifact upload failed or was not attempted." >> $GITHUB_ENV
+            echo "body=A new ${{ env.type }} named '${{ env.ref }}' was created in the repository. You can view it here: ${{ env.url }}. Artifact upload failed or was not attempted." >> $GITHUB_ENV
           fi
             
       - name: Send Gmail Notification
