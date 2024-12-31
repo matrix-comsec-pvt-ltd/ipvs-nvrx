@@ -34,5 +34,21 @@ jobs:
       - name: Upload release artifacts to JFrog
         run: |
           echo "Uploading Artifacts..."
-          curl -u "admin:Admin@123" -T "$GITHUB_WORKSPACE/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
+          ARTIFACT_PATH="http://192.168.27.92:8082/artifactory/ipvs-nvrx-prod-release/2.2.0/rk3588h/field/nvrx_rk3588h-2.2.0.zip"
+          curl -u "admin:Admin@123" -T "$GITHUB_WORKSPACE/src/Application/Build/nvrx_rk3588h-2.2.0.zip" "$ARTIFACT_PATH"
+          echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> $GITHUB_ENV
           echo "Artifacts Uploaded Successfully"
+
+      - name: Trigger Notify Workflow
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "notify.yaml",
+              ref: context.ref,
+              inputs: {
+                artifact_path: process.env.ARTIFACT_PATH
+              }
+            })
