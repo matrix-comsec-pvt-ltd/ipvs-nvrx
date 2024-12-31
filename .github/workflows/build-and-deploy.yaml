@@ -45,16 +45,19 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const artifactUploaded = steps['upload-artifact'].outcome === 'success';
-            const inputs = {
-              artifact_path: artifactUploaded ? process.env.ARTIFACT_PATH : '',
-              artifact_uploaded: artifactUploaded.toString()
-            };
+            const artifactUploaded = process.env.ARTIFACT_UPLOADED === 'true';
+            const artifactPath = artifactUploaded ? process.env.ARTIFACT_PATH : '';
 
             github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: "notify.yaml",
               ref: context.ref,
-              inputs: inputs
+              inputs: {
+                artifact_path: artifactPath,
+                artifact_uploaded: artifactUploaded.toString()
+              }
             });
+        env:
+          ARTIFACT_UPLOADED: ${{ steps.upload-artifact.outcome == 'success' }}
+          ARTIFACT_PATH: ${{ env.ARTIFACT_PATH }}
