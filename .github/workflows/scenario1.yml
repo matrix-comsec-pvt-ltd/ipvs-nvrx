@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # Allows manual trigger  
 
 jobs:
-  start-runner:
+  build-and-upload:
     runs-on: ubuntu-latest
     steps:
       - name: Check if runner exists
@@ -36,25 +36,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
-  clone-and-upload:
-    needs: start-runner
-    runs-on: nvrx-build-900
-    steps:
-      - name: Clone repository
+      - name: Clone repository and upload file
         run: |
+          echo "Cloning repository..."
           git clone https://github.com/matrix-comsec-pvt-ltd/ipvs-nvrx.git
-          cd ipvs-nvrx
-          ls -l
-      - name: Upload define.mk to JFrog
-        run: |
+          ls -l ipvs-nvrx
+          
+          echo "Uploading define.mk to JFrog..."
           curl -u admin:Admin@123 -T ipvs-nvrx/define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
 
-  stop-runner:
-    needs: clone-and-upload
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
       - name: Stop Docker Runner
         run: |
+          echo "Stopping runner..."
           docker stop container-nvrx-build || true
           docker rm container-nvrx-build || true
