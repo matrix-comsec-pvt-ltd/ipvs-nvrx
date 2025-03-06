@@ -3,11 +3,10 @@ name: Build and Upload
 on:
   push:
     branches:
-      - main  # Adjust branch name if needed
-
+      - main
 jobs:
   start-runner:
-    runs-on: [self-hosted, 450094-1]  # Run on the 450094-1 self-hosted runner
+    runs-on: [self-hosted, host-runner]
     outputs:
       runner_status: ${{ steps.check-runner.outputs.status }}
     steps:
@@ -62,7 +61,7 @@ jobs:
 
   stop-runner:
     needs: build-job
-    runs-on: [self-hosted, 450094-1]  # Ensure cleanup runs on 450094-1
+    runs-on: [self-hosted, host-runner]
     steps:
       - name: Stop Docker Runner
         run: |
