@@ -22,7 +22,7 @@ jobs:
             echo "runner_found=false" >> "$GITHUB_ENV"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
   start-runner:
     needs: check-runner
@@ -42,7 +42,7 @@ jobs:
             -e USER_SUDO_PASSWORD='ubuntu' \
             -e JFROG_GITHUB_ACTION_RUNNER_REPO_PATH='mx-linux-thirdparty-deps/github-actions-runner/github-actions-runner-2.321.0/actions-runner-linux-x64-2.321.0.tar.gz' \
             -e GITHUB_REPO_PATH='matrix-comsec-pvt-ltd/ipvs-nvrx' \
-            -e GITHUB_ACCESS_TOKEN='${{ secrets.GITHUB_ACCESS_TOKEN }}' \
+            -e GITHUB_ACCESS_TOKEN='${{ secrets.MY_GITHUB_TOKEN }}' \
             -e GITHUB_ACTION_RUNNER_NAME='nvrx-build-900' \
             -e GITHUB_ACTION_RUNNER_LABELS='nvrx-build-900' \
             -e GITHUB_FORCE_REMOVE_RUNNER='false' \
