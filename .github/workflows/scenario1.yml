@@ -7,13 +7,19 @@ jobs:
   build-and-upload:
     runs-on: ubuntu-latest
     steps:
+      - name: Set GitHub Token for CLI
+        run: echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Login to Private Docker Registry
+        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login 192.168.27.92:8081 -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin
+
       - name: Check and Start Runner if Not Exists
         id: check-runner
         run: |
           RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r '.runners[]? | select(.name=="nvrx-build-900") | .status')
           if [[ "$RUNNER_STATUS" != "online" ]]; then
             echo "Runner not found or offline. Starting a new runner..."
-            docker run --name container-nvrx-build \
+            docker run --pull=always --name container-nvrx-build \
               -e ENABLE_BUILD_ENV='true' \
               -e ENABLE_GITHUB_RUNNER='true' \
               -e JFROG_JCR_URL='http://192.168.27.92:8082' \
@@ -50,9 +56,6 @@ jobs:
 
       - name: Deregister Runner from GitHub
         run: |
-          docker stop container-nvrx-build || true
-          docker rm container-nvrx-build || true
-          
           RUNNER_ID=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[]? | select(.name==\"nvrx-build-900\") | .id")
           if [[ -n "$RUNNER_ID" && "$RUNNER_ID" != "null" ]]; then
             echo "Deregistering runner with ID: $RUNNER_ID"
