@@ -10,9 +10,6 @@ jobs:
       - name: Set GitHub Token for CLI
         run: echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Login to Private Docker Registry
-        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login 192.168.27.92:8081 -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin
-
       - name: Check and Start Runner if Not Exists
         id: check-runner
         run: |
