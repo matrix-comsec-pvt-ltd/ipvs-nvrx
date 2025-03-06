@@ -31,7 +31,7 @@ jobs:
             -e GITHUB_ACTION_RUNNER_NAME='nvrx-build-900' \
             -e GITHUB_ACTION_RUNNER_LABELS='nvrx-build-900' \
             -e GITHUB_FORCE_REMOVE_RUNNER='false' \
-            nvr-test-build:1.0 &
+            192.168.27.92:8081/mx-linux-docker-images/nvr-test-build:1.0 &
           sleep 60  # Wait for runner to register
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
