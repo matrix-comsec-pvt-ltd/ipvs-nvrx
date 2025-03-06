@@ -5,16 +5,8 @@ on:
 
 jobs:
   build-and-upload:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # Use self-hosted runner
     steps:
-      - name: Install Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-          sudo systemctl enable docker
-          docker --version  # Verify installation
-          
       - name: Set GitHub Token for CLI
         run: echo "GH_TOKEN=${{ secrets.MY_GITHUB_TOKEN }}" >> $GITHUB_ENV
 
