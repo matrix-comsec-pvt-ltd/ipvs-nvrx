@@ -1,25 +1,25 @@
-name: Build and Upload Define.mk
+name: Build and Upload
 
-on:  
-  workflow_dispatch:
+on:
+  push:
+    branches:
+      - main  # Adjust branch name if needed
 
 jobs:
-  build-and-upload:
-    runs-on: self-hosted  # Use self-hosted runner
+  start-runner:
+    runs-on: [self-hosted, 450094-1]  # Run on the 450094-1 self-hosted runner
+    outputs:
+      runner_status: ${{ steps.check-runner.outputs.status }}
     steps:
       - name: Set GitHub Token for CLI
         run: echo "GH_TOKEN=${{ secrets.MY_GITHUB_TOKEN }}" >> $GITHUB_ENV
-
-      - name: Checkout GitHub Repository
-        uses: actions/checkout@v3
-        with:
-          repository: matrix-comsec-pvt-ltd/ipvs-nvrx
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Check and Start Runner if Not Exists
         id: check-runner
         run: |
           RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r '.runners[]? | select(.name=="nvrx-build-900") | .status')
+          echo "Runner Status: $RUNNER_STATUS"
+          echo "status=$RUNNER_STATUS" >> $GITHUB_ENV
           if [[ "$RUNNER_STATUS" != "online" ]]; then
             echo "Runner not found or offline. Starting a new runner..."
             docker run --pull=always --name container-nvrx-build \
@@ -43,19 +43,32 @@ jobs:
             sleep 60  # Wait for runner to register
           else
             echo "Runner already online. Skipping start."
-          fi
-      
+
+  build-job:
+    needs: start-runner
+    runs-on: [self-hosted, nvrx-build-900]  # Run specifically on nvrx-build-900
+    steps:
+      - name: Checkout GitHub Repository
+        uses: actions/checkout@v3
+        with:
+          repository: matrix-comsec-pvt-ltd/ipvs-nvrx
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+
       - name: Upload define.mk to JFrog
         run: |
           curl -u "admin:Admin@123" -T define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
           sleep 120
           curl -u "admin:Admin@123" -T SECURITY.md "http://192.168.27.92:8082/artifactory/poc-test/SECURITY.md"
-      
+
+  stop-runner:
+    needs: build-job
+    runs-on: [self-hosted, 450094-1]  # Ensure cleanup runs on 450094-1
+    steps:
       - name: Stop Docker Runner
         run: |
           docker stop container-nvrx-build || true
           docker rm container-nvrx-build || true
-      
+
       - name: Deregister Runner from GitHub
         run: |
           RUNNER_ID=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[]? | select(.name==\"nvrx-build-900\") | .id")
