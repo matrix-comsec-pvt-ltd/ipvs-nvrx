@@ -9,8 +9,7 @@ jobs:
     steps:
       - name: Check if runner exists
         run: |
-          RUNNER_NAME="nvrx-build-900"
-          RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[] | select(.name==\"$RUNNER_NAME\") | .status")
+          RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[] | select(.name==\"nvrx-build-900\") | .status")
           if [[ "$RUNNER_STATUS" == "online" ]]; then
             echo "Runner is already running, skipping start."
             exit 0
@@ -36,17 +35,36 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
-      - name: Clone repository and upload file
+      - name: Checkout Github Repository
+        uses: actions/checkout@v3
+        with:
+          repository: matrix-comsec-pvt-ltd/ipvs-nvrx
+          submodules: true
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - name: Upload define.mk to JFrog
         run: |
-          echo "Cloning repository..."
-          git clone https://github.com/matrix-comsec-pvt-ltd/ipvs-nvrx.git
-          ls -l ipvs-nvrx
+          if [[ ! -f "define.mk" ]]; then
+            echo "Error: define.mk not found!"
+            exit 1
+          fi
+          pwd && ls -al
           
           echo "Uploading define.mk to JFrog..."
-          curl -u admin:Admin@123 -T ipvs-nvrx/define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
+          curl -u admin:Admin@123 -T define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
 
       - name: Stop Docker Runner
         run: |
           echo "Stopping runner..."
           docker stop container-nvrx-build || true
           docker rm container-nvrx-build || true
+
+      - name: Deregister Runner from GitHub
+        run: |
+          RUNNER_ID=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[] | select(.name==\"nvrx-build-900\") | .id")
+          if [[ -n "$RUNNER_ID" ]]; then
+            echo "Deregistering runner with ID: $RUNNER_ID"
+            gh api -X DELETE repos/:owner/:repo/actions/runners/$RUNNER_ID
+          else
+            echo "Runner not found, skipping deregistration."
+          fi
