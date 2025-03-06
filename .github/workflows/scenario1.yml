@@ -1,9 +1,8 @@
 name: Build and Upload
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  
 jobs:
   start-runner:
     runs-on: [self-hosted, host-runner]
@@ -16,7 +15,7 @@ jobs:
       - name: Check and Start Runner if Not Exists
         id: check-runner
         run: |
-          RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r '.runners[]? | select(.name=="nvrx-build-900") | .status')
+          RUNNER_STATUS=$(gh api "repos/:owner/:repo/actions/runners" | jq -r '.runners[]? | select(.name=="nvrx-build-900") | .status')
           echo "Runner Status: $RUNNER_STATUS"
           echo "status=$RUNNER_STATUS" >> $GITHUB_ENV
           if [[ "$RUNNER_STATUS" != "online" ]]; then
@@ -39,9 +38,10 @@ jobs:
               -e GITHUB_ACTION_RUNNER_LABELS=nvrx-build-900 \
               -e GITHUB_FORCE_REMOVE_RUNNER=false \
               192.168.27.92:8081/mx-linux-docker-images/nvr-test-build:1.0 &
-            sleep 60  # Wait for runner to register
+            sleep 60
           else
             echo "Runner already online. Skipping start."
+          fi
 
   build-job:
     needs: start-runner
@@ -63,13 +63,11 @@ jobs:
     needs: build-job
     runs-on: [self-hosted, host-runner]
     steps:
-      - name: Stop Docker Runner
+      - name: Deregister Runner from GitHub
         run: |
           docker stop container-nvrx-build || true
           docker rm container-nvrx-build || true
-
-      - name: Deregister Runner from GitHub
-        run: |
+          
           RUNNER_ID=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[]? | select(.name==\"nvrx-build-900\") | .id")
           if [[ -n "$RUNNER_ID" && "$RUNNER_ID" != "null" ]]; then
             echo "Deregistering runner with ID: $RUNNER_ID"
