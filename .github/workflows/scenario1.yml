@@ -1,70 +1,62 @@
 name: Build and Upload Define.mk
 
 on:  
-  workflow_dispatch:  # Allows manual trigger  
+  workflow_dispatch:
 
 jobs:
   build-and-upload:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if runner exists
+      - name: Check and Start Runner if Not Exists
+        id: check-runner
         run: |
-          RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[] | select(.name==\"nvrx-build-900\") | .status")
-          if [[ "$RUNNER_STATUS" == "online" ]]; then
-            echo "Runner is already running, skipping start."
-            exit 0
+          RUNNER_STATUS=$(gh api repos/:owner/:repo/actions/runners | jq -r '.runners[]? | select(.name=="nvrx-build-900") | .status')
+          if [[ "$RUNNER_STATUS" != "online" ]]; then
+            echo "Runner not found or offline. Starting a new runner..."
+            docker run --name container-nvrx-build \
+              -e ENABLE_BUILD_ENV='true' \
+              -e ENABLE_GITHUB_RUNNER='true' \
+              -e JFROG_JCR_URL='http://192.168.27.92:8082' \
+              -e JFROG_JCR_USERNAME='admin' \
+              -e JFROG_JCR_PASSWORD='Admin@123' \
+              -e JFROG_BUILD_ENV_SCRIPT_REPO_PATH='mx-linux-toolchains/nvrx/rk3588/install-toolchain.sh' \
+              -e USER_SUDO_PASSWORD='ubuntu' \
+              -e JFROG_GITHUB_ACTION_RUNNER_REPO_PATH='mx-linux-thirdparty-deps/github-actions-runner/github-actions-runner-2.321.0/actions-runner-linux-x64-2.321.0.tar.gz' \
+              -e GITHUB_REPO_PATH='matrix-comsec-pvt-ltd/ipvs-nvrx' \
+              -e GITHUB_ACCESS_TOKEN='${{ secrets.MY_GITHUB_TOKEN }}' \
+              -e GITHUB_ACTION_RUNNER_NAME='nvrx-build-900' \
+              -e GITHUB_ACTION_RUNNER_LABELS='nvrx-build-900' \
+              -e GITHUB_FORCE_REMOVE_RUNNER='false' \
+              192.168.27.92:8081/mx-linux-docker-images/nvr-test-build:1.0 &
+            sleep 60  # Wait for runner to register
+          else
+            echo "Runner already online. Skipping start."
           fi
-          echo "Starting new runner..."
-          docker rm -f container-nvrx-build || true
-          docker run --name container-nvrx-build \
-            -e ENABLE_BUILD_ENV='true' \
-            -e ENABLE_GITHUB_RUNNER='true' \
-            -e JFROG_JCR_URL='http://192.168.27.92:8082' \
-            -e JFROG_JCR_USERNAME='admin' \
-            -e JFROG_JCR_PASSWORD='Admin@123' \
-            -e JFROG_BUILD_ENV_SCRIPT_REPO_PATH='mx-linux-toolchains/nvrx/rk3588/install-toolchain.sh' \
-            -e USER_SUDO_PASSWORD='ubuntu' \
-            -e JFROG_GITHUB_ACTION_RUNNER_REPO_PATH='mx-linux-thirdparty-deps/github-actions-runner/github-actions-runner-2.321.0/actions-runner-linux-x64-2.321.0.tar.gz' \
-            -e GITHUB_REPO_PATH='matrix-comsec-pvt-ltd/ipvs-nvrx' \
-            -e GITHUB_ACCESS_TOKEN='${{ secrets.MY_GITHUB_TOKEN }}' \
-            -e GITHUB_ACTION_RUNNER_NAME='nvrx-build-900' \
-            -e GITHUB_ACTION_RUNNER_LABELS='nvrx-build-900' \
-            -e GITHUB_FORCE_REMOVE_RUNNER='false' \
-            192.168.27.92:8081/mx-linux-docker-images/nvr-test-build:1.0 &
-          sleep 60  # Wait for runner to register
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
-      - name: Checkout Github Repository
+      - name: Checkout GitHub Repository
         uses: actions/checkout@v3
         with:
           repository: matrix-comsec-pvt-ltd/ipvs-nvrx
-          submodules: true
           token: ${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Upload define.mk to JFrog
         run: |
-          if [[ ! -f "define.mk" ]]; then
-            echo "Error: define.mk not found!"
-            exit 1
-          fi
-          pwd && ls -al
-          
-          echo "Uploading define.mk to JFrog..."
-          curl -u admin:Admin@123 -T define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
+          curl -u "admin:Admin@123" -T define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
 
       - name: Stop Docker Runner
         run: |
-          echo "Stopping runner..."
           docker stop container-nvrx-build || true
           docker rm container-nvrx-build || true
 
       - name: Deregister Runner from GitHub
         run: |
-          RUNNER_ID=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[] | select(.name==\"nvrx-build-900\") | .id")
-          if [[ -n "$RUNNER_ID" ]]; then
+          docker stop container-nvrx-build || true
+          docker rm container-nvrx-build || true
+          
+          RUNNER_ID=$(gh api repos/:owner/:repo/actions/runners | jq -r ".runners[]? | select(.name==\"nvrx-build-900\") | .id")
+          if [[ -n "$RUNNER_ID" && "$RUNNER_ID" != "null" ]]; then
             echo "Deregistering runner with ID: $RUNNER_ID"
             gh api -X DELETE repos/:owner/:repo/actions/runners/$RUNNER_ID
           else
-            echo "Runner not found, skipping deregistration."
+            echo "No runner to deregister."
           fi
