@@ -48,7 +48,7 @@ jobs:
       - name: Upload define.mk to JFrog
         run: |
           curl -u "admin:Admin@123" -T define.mk "http://192.168.27.92:8082/artifactory/poc-test/define.mk"
-          sleep 30
+          sleep 120
           curl -u "admin:Admin@123" -T SECURITY.md "http://192.168.27.92:8082/artifactory/poc-test/SECURITY.md"
       
       - name: Stop Docker Runner
