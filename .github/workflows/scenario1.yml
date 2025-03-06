@@ -23,22 +23,22 @@ jobs:
           if [[ "$RUNNER_STATUS" != "online" ]]; then
             echo "Runner not found or offline. Starting a new runner..."
             docker run --pull=always --name container-nvrx-build \
-              --network=host \  # Use host networking to avoid timeout
+              --network=host \
               -e DOCKER_CLIENT_TIMEOUT=300 \
               -e COMPOSE_HTTP_TIMEOUT=300 \
-              -e ENABLE_BUILD_ENV='true' \
-              -e ENABLE_GITHUB_RUNNER='true' \
-              -e JFROG_JCR_URL='http://192.168.27.92:8082' \
-              -e JFROG_JCR_USERNAME='admin' \
-              -e JFROG_JCR_PASSWORD='Admin@123' \
-              -e JFROG_BUILD_ENV_SCRIPT_REPO_PATH='mx-linux-toolchains/nvrx/rk3588/install-toolchain.sh' \
-              -e USER_SUDO_PASSWORD='ubuntu' \
-              -e JFROG_GITHUB_ACTION_RUNNER_REPO_PATH='mx-linux-thirdparty-deps/github-actions-runner/github-actions-runner-2.321.0/actions-runner-linux-x64-2.321.0.tar.gz' \
-              -e GITHUB_REPO_PATH='matrix-comsec-pvt-ltd/ipvs-nvrx' \
-              -e GITHUB_ACCESS_TOKEN='${{ secrets.MY_GITHUB_TOKEN }}' \
-              -e GITHUB_ACTION_RUNNER_NAME='nvrx-build-900' \
-              -e GITHUB_ACTION_RUNNER_LABELS='nvrx-build-900' \
-              -e GITHUB_FORCE_REMOVE_RUNNER='false' \
+              -e ENABLE_BUILD_ENV=true \
+              -e ENABLE_GITHUB_RUNNER=true \
+              -e JFROG_JCR_URL=http://192.168.27.92:8082 \
+              -e JFROG_JCR_USERNAME=admin \
+              -e JFROG_JCR_PASSWORD=Admin@123 \
+              -e JFROG_BUILD_ENV_SCRIPT_REPO_PATH=mx-linux-toolchains/nvrx/rk3588/install-toolchain.sh \
+              -e USER_SUDO_PASSWORD=ubuntu \
+              -e JFROG_GITHUB_ACTION_RUNNER_REPO_PATH=mx-linux-thirdparty-deps/github-actions-runner/github-actions-runner-2.321.0/actions-runner-linux-x64-2.321.0.tar.gz \
+              -e GITHUB_REPO_PATH=matrix-comsec-pvt-ltd/ipvs-nvrx \
+              -e GITHUB_ACCESS_TOKEN=${{ secrets.MY_GITHUB_TOKEN }} \
+              -e GITHUB_ACTION_RUNNER_NAME=nvrx-build-900 \
+              -e GITHUB_ACTION_RUNNER_LABELS=nvrx-build-900 \
+              -e GITHUB_FORCE_REMOVE_RUNNER=false \
               192.168.27.92:8081/mx-linux-docker-images/nvr-test-build:1.0 &
             sleep 60  # Wait for runner to register
           else
