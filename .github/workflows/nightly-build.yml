@@ -1,0 +1,16 @@
+name: Nightly Build on Feature Branches
+
+on:
+  schedule:
+    - cron: '11 20 * * *'  # Runs every night at midnight UTC
+  push:
+    branches:
+      - 'feature-*'  # Matches all branches starting with 'feature-'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print branch name
+        run: | 
+          echo "Building branch: ${GITHUB_REF#refs/heads/}"
