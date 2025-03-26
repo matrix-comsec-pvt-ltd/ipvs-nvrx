@@ -34,8 +34,8 @@ jobs:
         jf config remove artifactory-server || echo "No existing config to remove"
         jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
-          --user="admin" \
-          --password="Admin@123" \
+          --user="${{ vars.JFROG_USER }}" \
+          --password="${{ vars.JFROG_PASSWORD }}" \
           --interactive=false --insecure-tls=true
 
     - name: Upload to JFrog Artifactory
