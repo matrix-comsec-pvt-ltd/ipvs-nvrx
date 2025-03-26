@@ -25,7 +25,7 @@ jobs:
     #      curl -k -u "${{ vars.JFROG_USER }}:${{ vars.JFROG_PASSWORD }}" -T sample-file.zip "${{ vars.JFROG_URL }}/from-github-actions/sample-file.zip"
     
     - name: Set up JFrog CLI
-      uses: jfrog/setup-jfrog-cli@v3
+      uses: jfrog/setup-jfrog-cli@v4
       with:
         version: latest
 
