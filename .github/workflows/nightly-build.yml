@@ -2,15 +2,17 @@ name: Nightly Build on Feature Branches
 
 on:
   schedule:
-    - cron: '11 20 * * *'  # Runs every night at midnight UTC
+    - cron: '13 14 * * *'  # Runs every day at 20:13 IST (14:13 UTC)
   push:
     branches:
       - 'feature-*'  # Matches all branches starting with 'feature-'
+  pull_request:
+    branches:
+      - 'feature-*'  # Runs on PRs to any feature branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Print branch name
-        run: | 
-          echo "Building branch: ${GITHUB_REF#refs/heads/}"
+        run: echo "Building branch: ${GITHUB_REF#refs/heads/}"
