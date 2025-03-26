@@ -33,32 +33,23 @@ jobs:
       run: |
         jf config remove artifactory-server --quiet || echo "No existing config to remove"
         
-    #- name: Add Configure JFrog CLI
-    #  run: |
-    #    jf config add artifactory-server \
-    #      --artifactory-url="${{ vars.JFROG_URL }}" \
-    #      --user="${{ vars.JFROG_USER }}" \
-    #      --password="${{ vars.JFROG_PASSWORD }}" \
-    #      --interactive=false \
-    #      --insecure-tls=true
-
-    - name: Add Configure JFrog CLI
+    - name: Add Config
       run: |
-        echo ${{ vars.JFROG_PASSWORD }} | jf config add artifactory-server \
+        jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
           --user="${{ vars.JFROG_USER }}" \
-          --password-stdin \
+          --password="${{ vars.JFROG_PASSWORD }}" \
           --interactive=false \
-          --insecure-tls=true
+          --insecure-tls
 
-    - name: Debug JFrog Vars
+    - name: Debug JFrog
       run: |
         jf c show
+        echo "${{ vars.JFROG_URL }}"
+        echo "${{ vars.JFROG_USER }}"
+        echo "${{ vars.JFROG_PASSWORD }}"
         
-        echo "JFROG_USER is set: ${#JFROG_USER} characters"
-        echo "JFROG_PASSWORD is set: ${#JFROG_PASSWORD} characters"
-        echo "JFROG_URL is set: ${#JFROG_URL} characters"
     
     - name: Upload to JFrog Artifactory
       run: |
-        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}" --insecure-tls=true
+        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}" --insecure-tls
