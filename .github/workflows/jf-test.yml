@@ -19,12 +19,12 @@ jobs:
       run: |
         zip sample-file.zip sample-file.txt
 
-    - name: Set up JFrog CLI (v1.0.0)
-      uses: jfrog/setup-jfrog-cli-action@v1.0.0
-
     - name: Upload to JFrog Artifactory
       run: |
           curl -u "${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T define.mk "${{ secrets.JFROG_URL }}/from-github-actions/sample-file.zip"
+    
+    #- name: Set up JFrog CLI (v1.0.0)
+    #  uses: jfrog/setup-jfrog-cli-action@v1.0.0
           
     #- name: Upload to JFrog Artifactory
     #  env:
