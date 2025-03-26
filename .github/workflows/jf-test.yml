@@ -42,4 +42,4 @@ jobs:
 
     - name: Upload to JFrog Artifactory
       run: |
-        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}"
+        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}" --insecure-tls=true
