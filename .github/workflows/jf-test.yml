@@ -37,8 +37,8 @@ jobs:
       run: |
         jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
-          --user="${{ vars.JFROG_USER }}" \
-          --password="${{ vars.JFROG_PASSWORD }}" \
+          --user="${{ secrets.JFROG_USER }}" \
+          --password="${{ secrets.JFROG_PASSWORD }}" \
           --interactive=false \
           --insecure-tls=true
 
@@ -46,8 +46,8 @@ jobs:
       run: |
         jf c show
         echo "${{ vars.JFROG_URL }}"
-        echo "${{ vars.JFROG_USER }}"
-        echo "${{ vars.JFROG_PASSWORD }}"
+        echo "${{ secrets.JFROG_USER }}"
+        echo "${{ secrets.JFROG_PASSWORD }}"
         
     
     - name: Upload to JFrog Artifactory
