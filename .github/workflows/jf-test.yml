@@ -40,7 +40,7 @@ jobs:
           --user="${{ vars.JFROG_USER }}" \
           --password="${{ vars.JFROG_PASSWORD }}" \
           --interactive=false \
-          --insecure-tls
+          --insecure-tls=true
 
     - name: Debug JFrog
       run: |
