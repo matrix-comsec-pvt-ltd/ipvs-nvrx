@@ -35,10 +35,11 @@ jobs:
 
         jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
-          --user="${{ vars.JFROG_USER }}" \
-          --password="${{ vars.JFROG_PASSWORD }}" \
-          --interactive=false
+          --user="${{ secrets.JFROG_USER }}" \
+          --password="${{ secrets.JFROG_PASSWORD }}" \
+          --interactive=false \
+          --insecure-tls=true
 
     - name: Upload to JFrog Artifactory
       run: |
-        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}" --insecure-tls=true
+        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}"
