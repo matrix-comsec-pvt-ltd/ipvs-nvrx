@@ -19,10 +19,8 @@ jobs:
       run: |
         zip sample-file.zip sample-file.txt
 
-    - name: Set up JFrog CLI
-      uses: jfrog/setup-jfrog-cli-action@v2
-      with:
-        version: '2.x' # Specify the version of JFrog CLI if necessary
+    - name: Set up JFrog CLI (v1.0.0)
+      uses: jfrog/setup-jfrog-cli-action@v1.0.0
 
     - name: Upload to JFrog Artifactory
       env:
