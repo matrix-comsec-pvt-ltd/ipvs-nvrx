@@ -1,0 +1,34 @@
+name: jf-test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create_zip_and_upload:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Create a sample file
+      run: |
+        echo "This is a sample file content" > sample-file.txt
+
+    - name: Zip the file
+      run: |
+        zip sample-file.zip sample-file.txt
+
+    - name: Set up JFrog CLI
+      uses: jfrog/setup-jfrog-cli-action@v1
+      with:
+        version: '2.x' # Specify the version of JFrog CLI if necessary
+
+    - name: Upload to JFrog Artifactory
+      env:
+        JFROG_URL: ${{ secrets.JFROG_URL }}  # URL for your JFrog instance
+        JFROG_USERNAME: ${{ secrets.JFROG_USER }}  # JFrog Username
+        JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}  # JFrog Password
+      run: |
+        jfrog rt config --url $JFROG_URL --user $JFROG_USERNAME --password $JFROG_PASSWORD
+        jfrog rt upload "sample-file.zip" "from-github-actions/"
