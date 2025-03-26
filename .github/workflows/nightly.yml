@@ -2,7 +2,7 @@ name: Nightly Build on Feature Branches
 
 on:
   schedule:
-    - cron: '07 20 * * *'  # Runs every night at midnight UTC
+    - cron: '08 20 * * *'  # Runs every night at midnight UTC
   push:
     branches:
       - 'feature-*'  # Matches all branches starting with 'feature-'
