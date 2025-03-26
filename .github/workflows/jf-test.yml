@@ -29,6 +29,10 @@ jobs:
       with:
         version: latest
 
+    - name: Remove Existing JFrog Config (If Exists)
+      run: |
+        jf config remove artifactory-server || echo "No existing config to remove"
+
     - name: Configure JFrog CLI
       run: |
         jf config add artifactory-server \
