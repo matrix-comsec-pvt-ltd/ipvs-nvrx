@@ -21,7 +21,7 @@ jobs:
 
     - name: Upload to JFrog Artifactory
       run: |
-          curl -u "${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }}" -T sample-file.zip "${{ secrets.JFROG_URL }}/from-github-actions/sample-file.zip"
+          curl -u "${{ vars.JFROG_USER }}:${{ vars.JFROG_PASSWORD }}" -T sample-file.zip "${{ vars.JFROG_URL }}/from-github-actions/sample-file.zip"
     
     #- name: Set up JFrog CLI (v1.0.0)
     #  uses: jfrog/setup-jfrog-cli-action@v1.0.0
