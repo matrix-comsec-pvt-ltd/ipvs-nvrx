@@ -1,0 +1,18 @@
+name: check export var
+
+on:
+  workflow_dispatch:
+
+jobs:
+  example_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 - Set Variable
+        run: echo "VAR_1=kickstart" >> $GITHUB_ENV
+
+      - name: Step 2 - Check Environment
+        run: echo "this is step2"
+
+      - name: Step 3 - Use Variable
+        run: |
+          echo "The value of VAR_1 is: ${VAR_1}"
