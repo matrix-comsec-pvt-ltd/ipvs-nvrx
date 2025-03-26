@@ -33,12 +33,12 @@ jobs:
       run: |
         jf config remove artifactory-server --quiet || echo "No existing config to remove"
 
-        jf config add artifactory-server1 \
+        jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
           --user="${{ vars.JFROG_USER }}" \
           --password="${{ vars.JFROG_PASSWORD }}" \
-          --interactive=false --insecure-tls=true
+          --interactive=false
 
     - name: Upload to JFrog Artifactory
       run: |
-        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}"
+        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}" --insecure-tls=true
