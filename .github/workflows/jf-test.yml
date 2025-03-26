@@ -49,7 +49,6 @@ jobs:
         echo "${{ secrets.JFROG_USER }}"
         echo "${{ secrets.JFROG_PASSWORD }}"
         
-    
     - name: Upload to JFrog Artifactory
       run: |
-        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip"
+        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --flat=true
