@@ -37,21 +37,21 @@ jobs:
     #  run: |
     #    jf config add artifactory-server \
     #      --artifactory-url="${{ vars.JFROG_URL }}" \
-    #      --user="${{ secrets.JFROG_USER }}" \
-    #      --password="${{ secrets.JFROG_PASSWORD }}" \
+    #      --user="${{ vars.JFROG_USER }}" \
+    #      --password="${{ vars.JFROG_PASSWORD }}" \
     #      --interactive=false \
     #      --insecure-tls=true
 
     - name: Add Configure JFrog CLI
       run: |
-        echo ${{ secrets.JFROG_PASSWORD }} | jf config add artifactory-server \
+        echo ${{ vars.JFROG_PASSWORD }} | jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
-          --user="${{ secrets.JFROG_USER }}" \
+          --user="${{ vars.JFROG_USER }}" \
           --password-stdin \
           --interactive=false \
           --insecure-tls=true
 
-    - name: Debug JFrog Secrets and Vars
+    - name: Debug JFrog Vars
       run: |
         jf c show
         
