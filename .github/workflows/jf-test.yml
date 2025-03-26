@@ -29,26 +29,35 @@ jobs:
       with:
         version: latest
 
-    - name: Configure JFrog CLI
+    - name: Remove Config
       run: |
         jf config remove artifactory-server --quiet || echo "No existing config to remove"
+        
+    #- name: Add Configure JFrog CLI
+    #  run: |
+    #    jf config add artifactory-server \
+    #      --artifactory-url="${{ vars.JFROG_URL }}" \
+    #      --user="${{ secrets.JFROG_USER }}" \
+    #      --password="${{ secrets.JFROG_PASSWORD }}" \
+    #      --interactive=false \
+    #      --insecure-tls=true
 
-        jf config add artifactory-server \
+    - name: Add Configure JFrog CLI
+      run: |
+        echo ${{ secrets.JFROG_PASSWORD }} | jf config add artifactory-server \
           --artifactory-url="${{ vars.JFROG_URL }}" \
           --user="${{ secrets.JFROG_USER }}" \
-          --password="${{ secrets.JFROG_PASSWORD }}" \
+          --password-stdin \
           --interactive=false \
           --insecure-tls=true
 
     - name: Debug JFrog Secrets and Vars
       run: |
-        echo "JFROG_USER is ${{ secrets.JFROG_USER }} set: ${#JFROG_USER} characters"
-        echo "JFROG_PASSWORD is ${{ secrets.JFROG_PASSWORD }} set: ${#JFROG_PASSWORD} characters"
-        echo "JFROG_URL is ${{ vars.JFROG_URL }} set: ${#JFROG_URL} characters"
-      env:
-        JFROG_USER: ${{ secrets.JFROG_USER }}
-        JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
-        JFROG_URL: ${{ vars.JFROG_URL }}
+        jf c show
+        
+        echo "JFROG_USER is set: ${#JFROG_USER} characters"
+        echo "JFROG_PASSWORD is set: ${#JFROG_PASSWORD} characters"
+        echo "JFROG_URL is set: ${#JFROG_URL} characters"
     
     - name: Upload to JFrog Artifactory
       run: |
