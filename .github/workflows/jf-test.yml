@@ -23,10 +23,14 @@ jobs:
       uses: jfrog/setup-jfrog-cli-action@v1.0.0
 
     - name: Upload to JFrog Artifactory
-      env:
-        JFROG_URL: ${{ secrets.JFROG_URL }}  # URL for your JFrog instance
-        JFROG_USERNAME: ${{ secrets.JFROG_USER }}  # JFrog Username
-        JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}  # JFrog Password
       run: |
-        jfrog rt config --url $JFROG_URL --user $JFROG_USERNAME --password $JFROG_PASSWORD
-        jfrog rt upload "sample-file.zip" "from-github-actions/"
+          curl -u "${{ secrets.JFROG_USER }}:${{ secrets.JFROG_PASSWORD }} -T define.mk "${{ secrets.JFROG_URL }}/from-github-actions/sample-file.zip"
+          
+    #- name: Upload to JFrog Artifactory
+    #  env:
+    #    JFROG_URL: ${{ secrets.JFROG_URL }}  # URL for your JFrog instance
+    #    JFROG_USERNAME: ${{ secrets.JFROG_USER }}  # JFrog Username
+    #    JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}  # JFrog Password
+    #  run: |
+    #    jfrog rt config --url $JFROG_URL --user $JFROG_USERNAME --password $JFROG_PASSWORD
+    #    jfrog rt upload "sample-file.zip" "from-github-actions/"
