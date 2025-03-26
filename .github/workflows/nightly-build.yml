@@ -2,7 +2,7 @@ name: Nightly Build on Feature Branches
 
 on:
   schedule:
-    - cron: '45 14 * * *'
+    - cron: '46 14 * * *'
   push:
     branches:
       - 'feature-*'  # Matches all branches starting with 'feature-'
@@ -15,4 +15,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print branch name
-        run: echo "Building branch: ${GITHUB_REF#refs/heads/}"
+        run: | 
+          echo "Building branch: ${GITHUB_REF#refs/heads/}"
