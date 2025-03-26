@@ -19,19 +19,24 @@ jobs:
       run: |
         zip sample-file.zip sample-file.txt
 
+    #- name: Upload to JFrog Artifactory
+    #  run: |
+    #      ping -c 4 172.16.0.213 || echo "Artifactory is unreachable"
+    #      curl -k -u "${{ vars.JFROG_USER }}:${{ vars.JFROG_PASSWORD }}" -T sample-file.zip "${{ vars.JFROG_URL }}/from-github-actions/sample-file.zip"
+    
+    - name: Set up JFrog CLI
+      uses: jfrog/setup-jfrog-cli@v3
+      with:
+        version: latest
+
+    - name: Configure JFrog CLI
+      run: |
+        jf config add artifactory-server \
+          --artifactory-url="${{ vars.JFROG_URL }}" \
+          --user="${{ vars.JFROG_USER }}" \
+          --password="${{ vars.JFROG_PASSWORD }}" \
+          --interactive=false
+
     - name: Upload to JFrog Artifactory
       run: |
-          ping -c 4 172.16.0.213 || echo "Artifactory is unreachable"
-          curl -k -u "${{ vars.JFROG_USER }}:${{ vars.JFROG_PASSWORD }}" -T sample-file.zip "${{ vars.JFROG_URL }}/from-github-actions/sample-file.zip"
-    
-    #- name: Set up JFrog CLI (v1.0.0)
-    #  uses: jfrog/setup-jfrog-cli-action@v1.0.0
-          
-    #- name: Upload to JFrog Artifactory
-    #  env:
-    #    JFROG_URL: ${{ secrets.JFROG_URL }}  # URL for your JFrog instance
-    #    JFROG_USERNAME: ${{ secrets.JFROG_USER }}  # JFrog Username
-    #    JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}  # JFrog Password
-    #  run: |
-    #    jfrog rt config --url $JFROG_URL --user $JFROG_USERNAME --password $JFROG_PASSWORD
-    #    jfrog rt upload "sample-file.zip" "from-github-actions/"
+        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}"
