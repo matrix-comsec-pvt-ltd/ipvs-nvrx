@@ -35,7 +35,7 @@ jobs:
           --artifactory-url="${{ vars.JFROG_URL }}" \
           --user="${{ vars.JFROG_USER }}" \
           --password="${{ vars.JFROG_PASSWORD }}" \
-          --interactive=false
+          --interactive=false --insecure-tls=true
 
     - name: Upload to JFrog Artifactory
       run: |
