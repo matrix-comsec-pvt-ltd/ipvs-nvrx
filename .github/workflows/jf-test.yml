@@ -40,6 +40,16 @@ jobs:
           --interactive=false \
           --insecure-tls=true
 
+    - name: Debug JFrog Secrets and Vars
+      run: |
+        echo "JFROG_USER is set: ${#JFROG_USER} characters"
+        echo "JFROG_PASSWORD is set: ${#JFROG_PASSWORD} characters"
+        echo "JFROG_URL is set: ${#JFROG_URL} characters"
+      env:
+        JFROG_USER: ${{ secrets.JFROG_USER }}
+        JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
+        JFROG_URL: ${{ secrets.JFROG_URL }}
+    
     - name: Upload to JFrog Artifactory
       run: |
         jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --url="${{ vars.JFROG_URL }}" --insecure-tls=true
