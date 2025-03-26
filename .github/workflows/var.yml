@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Step 1 - Set Variable
-        run: echo "VAR_1=kickstart" >> $GITHUB_ENV
+        run: export VAR_1=kickstart
 
       - name: Step 2 - Check Environment
         run: echo "this is step2"
