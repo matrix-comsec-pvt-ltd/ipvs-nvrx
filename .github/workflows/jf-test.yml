@@ -51,4 +51,4 @@ jobs:
         
     - name: Upload to JFrog Artifactory
       run: |
-        jf rt upload "sample-file.zip" "from-github-actions/sample-file.zip" --flat=true
+        jf rt upload "sample-file.zip" "from-github-actions/" --flat=true
