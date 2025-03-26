@@ -42,13 +42,13 @@ jobs:
 
     - name: Debug JFrog Secrets and Vars
       run: |
-        echo "JFROG_USER is set: ${#JFROG_USER} characters"
-        echo "JFROG_PASSWORD is set: ${#JFROG_PASSWORD} characters"
-        echo "JFROG_URL is set: ${#JFROG_URL} characters"
+        echo "JFROG_USER is ${{ secrets.JFROG_USER }} set: ${#JFROG_USER} characters"
+        echo "JFROG_PASSWORD is ${{ secrets.JFROG_PASSWORD }} set: ${#JFROG_PASSWORD} characters"
+        echo "JFROG_URL is ${{ vars.JFROG_URL }} set: ${#JFROG_URL} characters"
       env:
         JFROG_USER: ${{ secrets.JFROG_USER }}
         JFROG_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
-        JFROG_URL: ${{ secrets.JFROG_URL }}
+        JFROG_URL: ${{ vars.JFROG_URL }}
     
     - name: Upload to JFrog Artifactory
       run: |
