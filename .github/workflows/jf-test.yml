@@ -21,6 +21,7 @@ jobs:
 
     - name: Upload to JFrog Artifactory
       run: |
+          ping -c 4 172.16.0.213 || echo "Artifactory is unreachable"
           curl -u "${{ vars.JFROG_USER }}:${{ vars.JFROG_PASSWORD }}" -T sample-file.zip "${{ vars.JFROG_URL }}/from-github-actions/sample-file.zip"
     
     #- name: Set up JFrog CLI (v1.0.0)
